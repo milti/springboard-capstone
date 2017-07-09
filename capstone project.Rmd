@@ -1,0 +1,28 @@
+---
+title: "springboard capstone"
+author: "milti leonard"
+date: "7/9/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Detecting Bot Communities on Twitter and Determining Their Influence
+
+Social media carries tremendous influence on the ongoing zeitgesit
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
