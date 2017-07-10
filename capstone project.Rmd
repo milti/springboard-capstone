@@ -11,11 +11,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Detecting Bot Communities on Twitter and Determining Their Influence
 
-Social media carries tremendous influence on the ongoing zeitgesit
+Social media imparts tremendous influence on the ongoing zeitgeist. This influence can have IRL (or real world) consequences and repercussions. The intent of the platform is to allow people of various backgrounds, but similar interests, to connect and form communities of the like-minded that is not tied to geospatial constraints. However, the reality is that various agents create and unleash *bot* accounts that disrupt those communities and alters the digital landscape.
 
-```{r cars}
-summary(cars)
+This project will focus on a selected set of *loaded* hashtags (meaning those whose LIWC is representative of a defined agenda) that command a respectable trending status to see whether or no it attracts these *bot* accounts and to what degree. Also to be investigated, is whether it is the human accounts or their *bot* counterparts that take the lead in establishing that trending status. The individual tweet atrributes to be looked at will include 
+
+1. timestamp
+2. retweet status
+3. 
+
+On the various accounts themselves, this project will look to the following
+
+1. profile text
+2. profile pic (is it an egg)
+3. followers
+4. following
+
+The R packages that will be utilised in this study are as follows (with one or two being dropped, dependent on subsequent decisions made in the experimental design)
+
+```{r eval=FALSE}
+library(caret)
+library(igraph)
+library(twitteR)
+library(streamR)
+library(RNeo4j)
+
 ```
+
+The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can the interaction between the sequestered groups be found?
 
 ## Including Plots
 
