@@ -35,9 +35,20 @@ library(twitteR)
 library(streamR)
 library(RNeo4j)
 
+requestURL <- "https://api.twitter.com/oauth/request_token"
+accessURL <- "https://api.twitter.com/oauth/access_token"
+authURL <- "https://api.twitter.com/oauth/authorize"
+consumer_key <- '8D843UpqjLV3kOhckizpHXKd4'
+consumer_secret <- 'EXRkgexU1KLCZFeVEfrbgfHYvRFdqCVCxmYaJw06ze6nEQZInj'
+access_token <- '1240280636-VNnxhIGWUP5UDWftvU8Ts7tb2ypdjAhFKBIhjBY'
+access_secret <- 'I2lRPYXhGgdsUJhqbxzoC2CSuov7ClAlDkjuabXVLzBVF'
+
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+
+getTwitterOAuth(consumer_key, consumer_secret)
 ```
 
-The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can the interaction between the sequestered groups be found?
+The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
 
 ## Including Plots
 
