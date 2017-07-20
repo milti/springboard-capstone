@@ -35,6 +35,7 @@ library(twitteR)
 library(streamR)
 library(RNeo4j)
 
+
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
@@ -42,13 +43,29 @@ consumer_key <- '8D843UpqjLV3kOhckizpHXKd4'
 consumer_secret <- 'EXRkgexU1KLCZFeVEfrbgfHYvRFdqCVCxmYaJw06ze6nEQZInj'
 access_token <- '1240280636-VNnxhIGWUP5UDWftvU8Ts7tb2ypdjAhFKBIhjBY'
 access_secret <- 'I2lRPYXhGgdsUJhqbxzoC2CSuov7ClAlDkjuabXVLzBVF'
-
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
-getTwitterOAuth(consumer_key, consumer_secret)
+
 ```
 
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
+
+##steps to continue forward
+
+1. Get your API
+import debot db = debot.DeBot('your_api_key') db.get_related_bots('election2016')
+2. twitteR
+3. Search for feeds
+4. By the username of the bot
+5. Then look for hashtags in those feeds
+6. Now search twitteR again for those hashtags
+7. This will give you a dataset which contains tweets from both bots and humans
+8. So now we have a labeled dataset
+which contains both bots and humans
+this is the startpoint for training a machine learning algo
+Thereafter we identify a suitable classification algo
+
+
 
 ## Including Plots
 
