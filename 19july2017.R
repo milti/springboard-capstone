@@ -1,5 +1,5 @@
 knitr::opts_chunk$set(echo = TRUE)
-libary(RNeo4j)
+library(RNeo4j)
 library(twitteR)
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
@@ -9,18 +9,20 @@ consumer_secret <- 'EXRkgexU1KLCZFeVEfrbgfHYvRFdqCVCxmYaJw06ze6nEQZInj'
 access_token <- '1240280636-VNnxhIGWUP5UDWftvU8Ts7tb2ypdjAhFKBIhjBY'
 access_secret <- 'I2lRPYXhGgdsUJhqbxzoC2CSuov7ClAlDkjuabXVLzBVF'
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
-source('~/R/springboard twitteR/19july2017.R')
-source('~/R/springboard twitteR/19july2017.R')
-sessionInfo()
-source('~/R/19july2017.R')
-source('~/R/19july2017.R')
+
+library(ROAuth)
+my_oauth <- OAuthFactory$new(consumerKey=consumer_key,consumerSecret=consumer_secret, requestURL=requestURL, accessURL=accessURL, authURL=authURL)
+my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+save(my_oauth, file = "my_oauth.Rdata")
+
+
 sessionInfo()
 library(reticulate)
 library(XML)
 path_to_python <- "/usr/local/bin/python3.6"
 use_python(path_to_python)
 dbot=import("debot")
-db = dbot$DeBot('DZgJyWsdPQlbU5ManszuakZRSnldBWn5LuE9hXdX')#This is my API key
+db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
 bots=htmlParse(db$get_related_bots('election2016'))#Change 'election2016' to any other topic of your interest
 #Now parse the XML data into a dataframe
 botlist <- xmlToList(bots)

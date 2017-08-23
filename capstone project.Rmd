@@ -28,23 +28,61 @@ On the various accounts themselves, this project will look to the following
 
 The R packages that will be utilised in this study are as follows (with one or two being dropped, dependent on subsequent decisions made in the experimental design)
 
-```{r eval=FALSE}
+```{r, set-options, eval=FALSE, cache=FALSE}
+
 library(caret)
 library(igraph)
 library(twitteR)
 library(streamR)
 library(RNeo4j)
-
+library(tidyverse)
 
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumer_key <- '8D843UpqjLV3kOhckizpHXKd4'
-consumer_secret <- 'EXRkgexU1KLCZFeVEfrbgfHYvRFdqCVCxmYaJw06ze6nEQZInj'
-access_token <- '1240280636-VNnxhIGWUP5UDWftvU8Ts7tb2ypdjAhFKBIhjBY'
-access_secret <- 'I2lRPYXhGgdsUJhqbxzoC2CSuov7ClAlDkjuabXVLzBVF'
+consumer_key <- 'QpSBwPC1PwqUQ4eSMCVeXenDQ'
+consumer_secret <- '39YRwPaXF9u3TCvjqFaElSxmEEe7xcUJTzg0M2oa3egutPa6B4'
+access_token <- '1240280636-GFbqEWiGKiP17KmN4oyrFwdZwQBJEJA3BRy2TmW'
+access_secret <- 'vsnTNryz83p0XS4rSz6dwOmGRf0SZC2pPtxGnAkvUikSR'
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
+library(reticulate)
+library(XML)
+path_to_python <- "/usr/local/bin/python3.6"
+use_python(path_to_python)
+dbot=import("debot")
+db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
+#bots=htmlParse(db$get_related_bots('election2016'))#Change 'election2016' to any other topic of your interest
+cbots=htmlParse(db$get_related_bots('Charlottesville'))
+#Now parse the XML data into a dataframe
+botlist <- xmlToList(cbots)
+
+library(listviewer)
+flatbot <- flatten(botlist)
+flatterbot <- flatten(flatbot)
+remove(flatbot)
+flatbot <- flatten(flatterbot)
+newBotlist <- unname(sapply(flatbot, `[`, 2))
+
+
+#my_oauth <- OAuthFactory$new(consumerKey=consumer_key,consumerSecret=consumer_secret, requestURL=requestURL, accessURL=accessURL, authURL=authURL)
+#my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+#save(my_oauth, file = "my_oauth.Rdata")
+load("~/R/github/springboard capstone/my_oauth.Rdata")
+
+botAccts <- lookupUsers(newBotlist)
+botAcctlist <- twListToDF(botAccts)
+acctNames <- row.names.data.frame(botAcctlist)
+#electionTweets <- lapply(acctNames, userStream(file.name = "", with = "user", oauth = my_oauth))
+
+head(botAccts)
+
+#fromAccts <- rownames(botAcctlist)
+fromAccts <- paste(from, rownames(botAcctlist))
+fromAccts <- gsub(" ", "", fromAccts[])
+
+#works only on the first account listed
+walk(searchTwitter(freeAccts[1:10], n=15))
 
 ```
 
@@ -52,15 +90,15 @@ The results will be summarised in a network graph of the accounts in an attempt 
 
 ##steps to continue forward
 
-1. Get your API
-import debot db = debot.DeBot('your_api_key') db.get_related_bots('election2016')
-2. twitteR
-3. Search for feeds
-4. By the username of the bot
-5. Then look for hashtags in those feeds
-6. Now search twitteR again for those hashtags
-7. This will give you a dataset which contains tweets from both bots and humans
-8. So now we have a labeled dataset
+- [x] Get your API
+import debot db = debot.DeBot('your_api_key') db.get_related_bots('Charlottesville')
+- [x] twitteR
+- [] Search for feeds
+- [] By the username of the bot
+- [] Then look for hashtags in those feeds
+- [] Now search twitteR again for those hashtags
+- [] This will give you a dataset which contains tweets from both bots and humans
+- [] So now we have a labeled dataset
 which contains both bots and humans
 this is the startpoint for training a machine learning algo
 Thereafter we identify a suitable classification algo
