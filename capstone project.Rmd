@@ -85,7 +85,7 @@ fromAccts <- gsub(" ", "", fromAccts[])
 head(fromAccts)
 
 #works only on the first account listed
-walk(searchTwitter(freeAccts[1:10], n=15))
+walk(searchTwitter(fromAccts[1:10], n=15))
 
 ```
 
