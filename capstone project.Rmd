@@ -78,6 +78,7 @@ acctNames <- row.names.data.frame(botAcctlist)
 head(botAccts)
 
 #fromAccts <- rownames(botAcctlist)
+from <- "from:"
 fromAccts <- paste(from, rownames(botAcctlist))
 fromAccts <- gsub(" ", "", fromAccts[])
 
