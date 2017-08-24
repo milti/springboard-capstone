@@ -84,9 +84,24 @@ fromAccts <- gsub(" ", "", fromAccts[])
 
 head(fromAccts)
 
-#works only on the first account listed
-walk(searchTwitter(freeAccts[1:10], n=15))
+unlistedBots <- unlist(botAcctlist[]$screenName)
+botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
 
+#works only on the first account listed
+#walk(searchTwitter(fromAccts[1:10], n=15))
+#using this command but now having OAuth errors
+#ktweets <- map(acctNames, ~ userTimeline(.x, n=15))
+
+#application of *purrr* function
+#latbot <- flatten(flatten(flatten(botlist)))
+#newBotlist <- unlist(unname(sapply(flatbot, `[`, 2)))
+#botdetails <- map(newBotlist[1:100], ~lookupUsers(.x))
+
+> for (acct in acctNames) { ktweets <- userTimeline(acct, n=200)}
+#Error in twInterfaceObj$doAPICall(cmd, params, method, ...) : 
+#  Service Unavailable (HTTP 503).
+#In addition: There were 22 warnings (use warnings() to see them)
+ 
 ```
 
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
