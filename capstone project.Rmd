@@ -36,6 +36,7 @@ library(twitteR)
 library(streamR)
 library(RNeo4j)
 library(tidyverse)
+library(stringr)
 
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
@@ -54,6 +55,7 @@ dbot=import("debot")
 db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
 #bots=htmlParse(db$get_related_bots('election2016'))#Change 'election2016' to any other topic of your interest
 cbots=htmlParse(db$get_related_bots('Charlottesville'))
+
 #Now parse the XML data into a dataframe
 botlist <- xmlToList(cbots)
 
@@ -82,10 +84,18 @@ from <- "from:"
 fromAccts <- paste(from, rownames(botAcctlist))
 fromAccts <- gsub(" ", "", fromAccts[])
 
+library(stringr)
 head(fromAccts)
 
 unlistedBots <- unlist(botAcctlist[]$screenName)
 botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
+botDF <- twListToDF(flatten(botdetails))
+botRT <- filter(botDF, isRetweet == "TRUE")
+botOPEN <- filter(botDF, isRetweet != "TRUE")
+acctRT <- word(botRT$text, 2)
+unique(as.character(sort(acctRT)))
+
+
 
 #works only on the first account listed
 #walk(searchTwitter(fromAccts[1:10], n=15))
@@ -97,7 +107,7 @@ botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
 #newBotlist <- unlist(unname(sapply(flatbot, `[`, 2)))
 #botdetails <- map(newBotlist[1:100], ~lookupUsers(.x))
 
-> for (acct in acctNames) { ktweets <- userTimeline(acct, n=200)}
+#> for (acct in acctNames) { ktweets <- userTimeline(acct, n=200)}
 #Error in twInterfaceObj$doAPICall(cmd, params, method, ...) : 
 #  Service Unavailable (HTTP 503).
 #In addition: There were 22 warnings (use warnings() to see them)
