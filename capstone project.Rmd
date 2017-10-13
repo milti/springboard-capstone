@@ -78,14 +78,14 @@ acctNames <- row.names.data.frame(botAcctlist)
 #electionTweets <- lapply(acctNames, userStream(file.name = "", with = "user", oauth = my_oauth))
 
 head(botAccts)
-
-#fromAccts <- rownames(botAcctlist)
-from <- "from:"
-fromAccts <- paste(from, rownames(botAcctlist))
-fromAccts <- gsub(" ", "", fromAccts[])
+# 
+# #fromAccts <- rownames(botAcctlist)
+# from <- "from:"
+# fromAccts <- paste(from, rownames(botAcctlist))
+# fromAccts <- gsub(" ", "", fromAccts[])
 
 library(stringr)
-head(fromAccts)
+#head(fromAccts)
 
 unlistedBots <- unlist(botAcctlist[]$screenName)
 botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
@@ -121,11 +121,11 @@ The results will be summarised in a network graph of the accounts in an attempt 
 - [x] Get your API
 import debot db = debot.DeBot('your_api_key') db.get_related_bots('Charlottesville')
 - [x] twitteR
-- [] Search for feeds
-- [] By the username of the bot
+- [x] Search for feeds
+- [x] By the username of the bot
 - [] Then look for hashtags in those feeds
 - [] Now search twitteR again for those hashtags
-- [] This will give you a dataset which contains tweets from both bots and humans
+- [x] This will give you a dataset which contains tweets from both bots and humans
 - [] So now we have a labeled dataset
 which contains both bots and humans
 this is the startpoint for training a machine learning algo
