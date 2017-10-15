@@ -95,7 +95,9 @@ botOPEN <- filter(botDF, isRetweet != "TRUE")
 acctRT <- word(botRT$text, 2)
 unique(as.character(sort(acctRT)))
 
-
+recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
+recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
+botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
 
 #works only on the first account listed
 #walk(searchTwitter(fromAccts[1:10], n=15))
