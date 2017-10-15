@@ -100,6 +100,7 @@ recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
 botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
 
 #works only on the first account listed
+<<<<<<< HEAD
 #walk(searchTwitter(fromAccts[1:10], n=15))
 #using this command but now having OAuth errors
 #ktweets <- map(acctNames, ~ userTimeline(.x, n=15))
@@ -114,6 +115,10 @@ botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created,
 #  Service Unavailable (HTTP 503).
 #In addition: There were 22 warnings (use warnings() to see them)
  
+=======
+walk(searchTwitter(fromAccts[1:10], n=15))
+
+>>>>>>> origin/master
 ```
 
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
