@@ -104,6 +104,8 @@ tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
 tweeters <- unique(tweetsOPEN$screenName)
 length(tweeters)
 
+##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
+##[1] "@mor1019chacha Kamo... | @mor1019chacha Paki tanong naman po @mor1019chacha  kung Pati ba ugali kaya niyang iparetoke,.kung Oo paretoke niya Kami# #SakangIsFine | #NewProfilePic https://t.co/bvQc2tWJZ5 | They are the most unforgettable group in KPOP WORLD. \n\n2NE1\nSNSD\nT-PARA\nKARA\nMISS A\n4MINUTE
 
 save.image("brooklyn.Rdata")
 
