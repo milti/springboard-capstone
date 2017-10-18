@@ -47,6 +47,7 @@ access_token <- '1240280636-GFbqEWiGKiP17KmN4oyrFwdZwQBJEJA3BRy2TmW'
 access_secret <- 'vsnTNryz83p0XS4rSz6dwOmGRf0SZC2pPtxGnAkvUikSR'
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
+
 library(reticulate)
 library(XML)
 path_to_python <- "/usr/local/bin/python3.6"
@@ -98,27 +99,15 @@ unique(as.character(sort(acctRT)))
 recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
 recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
 botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
+tweetsRT <- filter(recentTweetsDF, isRetweet == "TRUE")
+tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
+tweeters <- unique(tweetsOPEN$screenName)
+length(tweeters)
 
-#works only on the first account listed
-<<<<<<< HEAD
-#walk(searchTwitter(fromAccts[1:10], n=15))
-#using this command but now having OAuth errors
-#ktweets <- map(acctNames, ~ userTimeline(.x, n=15))
 
-#application of *purrr* function
-#latbot <- flatten(flatten(flatten(botlist)))
-#newBotlist <- unlist(unname(sapply(flatbot, `[`, 2)))
-#botdetails <- map(newBotlist[1:100], ~lookupUsers(.x))
+save.image("brooklyn.Rdata")
 
-#> for (acct in acctNames) { ktweets <- userTimeline(acct, n=200)}
-#Error in twInterfaceObj$doAPICall(cmd, params, method, ...) : 
-#  Service Unavailable (HTTP 503).
-#In addition: There were 22 warnings (use warnings() to see them)
- 
-=======
-walk(searchTwitter(fromAccts[1:10], n=15))
 
->>>>>>> origin/master
 ```
 
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
