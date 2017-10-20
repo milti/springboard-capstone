@@ -107,7 +107,19 @@ length(tweeters)
 ##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
 ##[1] "@mor1019chacha Kamo... | @mor1019chacha Paki tanong naman po @mor1019chacha  kung Pati ba ugali kaya niyang iparetoke,.kung Oo paretoke niya Kami# #SakangIsFine | #NewProfilePic https://t.co/bvQc2tWJZ5 | They are the most unforgettable group in KPOP WORLD. \n\n2NE1\nSNSD\nT-PARA\nKARA\nMISS A\n4MINUTE
 
-save.image("brooklyn.Rdata")
+#save.image("brooklyn.Rdata")
+
+#code to log into webpage to submit tweets for LIWC evaluation
+txtInspect <- "http://textinspector.com/account/login?redirect=/"
+pgsession <-html_session(txtInspect)
+pgmform <- html_form(pgsession)[[1]]
+filled_form <- set_values(pgmform, 'email' = "milti@mac.com", 'password' = "rf13nn3$")
+submit_form(pgsession, filled_form)
+
+#actual form that submits the tweets
+workFlow <- "http://textinspector.com/workflow"
+wkSession <- html_session(workFlow)
+wkForm <- html_form(wkSession)[[1]]
 
 
 ```
