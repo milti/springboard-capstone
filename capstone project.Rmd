@@ -120,7 +120,10 @@ submit_form(pgsession, filled_form)
 workFlow <- "http://textinspector.com/workflow"
 wkSession <- html_session(workFlow)
 wkForm <- html_form(wkSession)[[1]]
+filled_wkForm <- set_values(wkForm, 'text' = unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | ")))
 
+result <- submit_form(wkSession, filled_wkForm)
+htmlParse(read_html(result$url))
 
 ```
 
