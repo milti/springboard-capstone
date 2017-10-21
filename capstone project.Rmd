@@ -78,7 +78,7 @@ botAcctlist <- twListToDF(botAccts)
 acctNames <- row.names.data.frame(botAcctlist)
 #electionTweets <- lapply(acctNames, userStream(file.name = "", with = "user", oauth = my_oauth))
 
-head(botAccts)
+#head(botAccts)
 # 
 # #fromAccts <- rownames(botAcctlist)
 # from <- "from:"
@@ -88,13 +88,13 @@ head(botAccts)
 library(stringr)
 #head(fromAccts)
 
-unlistedBots <- unlist(botAcctlist[]$screenName)
-botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
-botDF <- twListToDF(flatten(botdetails))
-botRT <- filter(botDF, isRetweet == "TRUE")
-botOPEN <- filter(botDF, isRetweet != "TRUE")
-acctRT <- word(botRT$text, 2)
-unique(as.character(sort(acctRT)))
+#unlistedBots <- unlist(botAcctlist[]$screenName)
+#botdetails <- map(unlistedBots[], ~searchTwitteR(.x, n=100))
+#botDF <- twListToDF(flatten(botdetails))
+#botRT <- filter(botDF, isRetweet == "TRUE")
+#botOPEN <- filter(botDF, isRetweet != "TRUE")
+#acctRT <- word(botRT$text, 2)
+#unique(as.character(sort(acctRT)))
 
 recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
 recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
@@ -109,6 +109,7 @@ length(tweeters)
 
 #save.image("brooklyn.Rdata")
 
+library(rvest)
 #code to log into webpage to submit tweets for LIWC evaluation
 txtInspect <- "http://textinspector.com/account/login?redirect=/"
 pgsession <-html_session(txtInspect)
@@ -121,8 +122,8 @@ workFlow <- "http://textinspector.com/workflow"
 wkSession <- html_session(workFlow)
 wkForm <- html_form(wkSession)[[1]]
 filled_wkForm <- set_values(wkForm, 'text' = unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | ")))
-
 result <- submit_form(wkSession, filled_wkForm)
+
 htmlParse(read_html(result$url))
 
 ```
