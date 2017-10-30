@@ -99,10 +99,32 @@ library(stringr)
 recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
 recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
 botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
+columnnames <- names(botDS)
+columnnames[1] <- "screenName"
+columnnames[2] <- "ID"
+columnnames[3] <- "acct_created"
+columnnames[4] <- "statusesCount"
+colnames(botDS) <- columnnames
+
 tweetsRT <- filter(recentTweetsDF, isRetweet == "TRUE")
 tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
 tweeters <- unique(tweetsOPEN$screenName)
 length(tweeters)
+
+save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
+saveRDS(newBotlist, "newBotlist")
+save(db, dbot, flatbot, flatterbot, acctNames, acctRT, bots, path_to_python, tweeters, unlistedBots, file = "Objets")
+saveRDS(tweetsOPEN, "tweetsOPEN")
+saveRDS(tweetsRT, "tweetsRT")
+saveRDS(twitter, "twitter")
+saveRDS(botOPEN, "botOPEN")
+saveRDS(botRT, "botRT")
+saveRDS(botdetails, "botdetails")
+saveRDS(botAccts, "botAccts")
+saveRDS(botAcctlist, "botAcctlist")
+saveRDS(recentTweetsDF, "recentTweetsDF")
+saveRDS(recentTweetsDS, "recentTweetsDS")
+
 
 ##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
 ##[1] "@mor1019chacha Kamo... | @mor1019chacha Paki tanong naman po @mor1019chacha  kung Pati ba ugali kaya niyang iparetoke,.kung Oo paretoke niya Kami# #SakangIsFine | #NewProfilePic https://t.co/bvQc2tWJZ5 | They are the most unforgettable group in KPOP WORLD. \n\n2NE1\nSNSD\nT-PARA\nKARA\nMISS A\n4MINUTE
