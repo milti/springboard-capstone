@@ -112,8 +112,7 @@ tweeters <- unique(tweetsOPEN$screenName)
 length(tweeters)
 
 groupedTweetsDF <- tweetsOPEN %>%
-  group_by(screenName)
-selectedTweetsDF <- groupedTweetsDF %>% 
+  group_by(screenName) %>%
   filter(screenName %in% botDS$screenName)
 
 save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
@@ -130,7 +129,7 @@ saveRDS(botAcctlist, "botAcctlist")
 saveRDS(recentTweetsDF, "recentTweetsDF")
 saveRDS(recentTweetsDS, "recentTweetsDS")
 saveRDS(groupedTweetsDF, "groupedTweetsDF")
-saveRDS(selectedTweetsDF, "selectedTweetsDF")
+#saveRDS(selectedTweetsDF, "selectedTweetsDF")
 
 
 ##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
