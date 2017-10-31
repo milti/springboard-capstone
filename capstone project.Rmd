@@ -37,6 +37,8 @@ library(streamR)
 library(RNeo4j)
 library(tidyverse)
 library(stringr)
+library(quanteda)
+library(koRpus)
 
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
@@ -114,6 +116,14 @@ length(tweeters)
 groupedTweetsDF <- tweetsOPEN %>%
   group_by(screenName) %>%
   filter(screenName %in% botDS$screenName)
+castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
+
+botDiv <- groupedTweetsDF %>%
+  group_by(screenName)
+  summarise(meanDiv = mean(langDiv))
+
+botDS <- left_join(botDS, botDiv)
+
 
 save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
 saveRDS(newBotlist, "newBotlist")
@@ -123,12 +133,14 @@ saveRDS(tweetsRT, "tweetsRT")
 saveRDS(twitter, "twitter")
 saveRDS(botOPEN, "botOPEN")
 saveRDS(botRT, "botRT")
+saveRDS(botDS, "botDS")
 saveRDS(botdetails, "botdetails")
 saveRDS(botAccts, "botAccts")
 saveRDS(botAcctlist, "botAcctlist")
 saveRDS(recentTweetsDF, "recentTweetsDF")
 saveRDS(recentTweetsDS, "recentTweetsDS")
 saveRDS(groupedTweetsDF, "groupedTweetsDF")
+saveRDS(castoffDF, "castoffDF")
 #saveRDS(selectedTweetsDF, "selectedTweetsDF")
 
 
