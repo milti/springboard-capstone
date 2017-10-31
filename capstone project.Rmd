@@ -111,6 +111,10 @@ tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
 tweeters <- unique(tweetsOPEN$screenName)
 length(tweeters)
 
+groupedTweetsDF <- tweetsOPEN %>%
+group_by(screenName)
+
+
 save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
 saveRDS(newBotlist, "newBotlist")
 save(db, dbot, flatbot, flatterbot, acctNames, acctRT, bots, path_to_python, tweeters, unlistedBots, file = "Objets")
@@ -124,7 +128,7 @@ saveRDS(botAccts, "botAccts")
 saveRDS(botAcctlist, "botAcctlist")
 saveRDS(recentTweetsDF, "recentTweetsDF")
 saveRDS(recentTweetsDS, "recentTweetsDS")
-
+saveRDS(groupedTweetsDF, "groupedTweetsDF")
 
 ##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
 ##[1] "@mor1019chacha Kamo... | @mor1019chacha Paki tanong naman po @mor1019chacha  kung Pati ba ugali kaya niyang iparetoke,.kung Oo paretoke niya Kami# #SakangIsFine | #NewProfilePic https://t.co/bvQc2tWJZ5 | They are the most unforgettable group in KPOP WORLD. \n\n2NE1\nSNSD\nT-PARA\nKARA\nMISS A\n4MINUTE
