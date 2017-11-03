@@ -182,6 +182,23 @@ htmlParse(read_html(result$url))
 
 ```
 
+```{r, eval=FALSE}
+#getting the source of the tweet (phone, web, other)
+uniqSource <- unique(recentTweetsDF$statusSource)
+inD <- which(str_detect(recentTweetsDF$statusSource, "Android"))
+androidTweetsDF <- recentTweetsDF[inD,]
+
+inD <- which(str_detect(recentTweetsDF$statusSource, "iP"))
+iTweetsDF <- recentTweetsDF[inD,]
+
+inD <- which(str_detect(recentTweetsDF$statusSource, "Web"))
+webTweetsDF <- recentTweetsDF[inD,]
+
+inD <- which(str_detect(recentTweetsDF$statusSource, paste(c("Android", "iP", "Web"), collapse = '|')))
+otherTweetsDF <- recentTweetsDF[-inD,]
+
+```
+
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
 
 ##steps to continue forward
