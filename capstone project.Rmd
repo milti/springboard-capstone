@@ -117,6 +117,7 @@ groupedTweetsDF <- tweetsOPEN %>%
   group_by(screenName) %>%
   filter(screenName %in% botDS$screenName)
 castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
+<<<<<<< HEAD
 
 #using quanteda pkg
 langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
@@ -136,6 +137,8 @@ descr.tagged.text <- describe(tagged.text)[["lttr.distrib"]]
 lex.div(tagged.text)
 lex.div(measure="validation")
 
+=======
+>>>>>>> origin/master
 
 save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
 saveRDS(newBotlist, "newBotlist")
@@ -152,9 +155,13 @@ saveRDS(botAcctlist, "botAcctlist")
 saveRDS(recentTweetsDF, "recentTweetsDF")
 saveRDS(recentTweetsDS, "recentTweetsDS")
 saveRDS(groupedTweetsDF, "groupedTweetsDF")
+<<<<<<< HEAD
 saveRDS(castoffDF, "castoffDF")
 saveRDS(langDiv, "langDiv")
 saveRDS(botDiv, "botDiv")
+=======
+saveRDS(castoffTweetsDF, "castoffTweetsDF")
+>>>>>>> origin/master
 #saveRDS(selectedTweetsDF, "selectedTweetsDF")
 
 
