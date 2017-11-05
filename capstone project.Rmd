@@ -137,6 +137,13 @@ descr.tagged.text <- describe(tagged.text)[["lttr.distrib"]]
 lex.div(tagged.text)
 lex.div(measure="validation")
 
+##Use lapply for multiple texts
+##filenames <- list.files(pattern="*.txt")
+##text.tagged <- lapply(filenames, function(x) treetag(x, treetagger="manual", lang="en", TT.options=list(path=filepath, preset="en")))
+##text.tagged[1]
+
+
+
 =======
 >>>>>>> origin/master
 
