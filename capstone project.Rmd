@@ -213,6 +213,25 @@ otherTweetsDF <- recentTweetsDF[-inD,]
 
 ```
 
+```{r}
+recentTweetsDF <- readRDS("capstone dataset/recentTweetsDF")
+library(qdapRegex)
+AppURL <- rm_between_multiple(recentTweetsDF$statusSource,"<",">")
+recentTweetsDF$App <- unlist(AppURL)
+appcount <- recentTweetsDF%>%group_by(App)%>%summarize(Count=n())%>%arrange(desc(Count))
+recentTweetsDF <- left_join(recentTweetsDF,appcount)
+recentTweetsDF$BoN <- ifelse(recentTweetsDF$Count>4,0,1)
+shredDF <- recentTweetsDF %>% select(screenName, AppURL, App, Count, BoN)
+shredDF <- recentTweetsDF %>% select(screenName, App, Count, BoN)
+botDS <- left_join(botDS, shredDF, by = "screenName")
+botDS <- unique(botDS)
+saveRDS(botDS, "capstone dataset/botDS")
+saveRDS(shredDF, "capstone dataset/shredDF")
+saveRDS(AppURL, "capstone dataset/AppURL")
+saveRDS(appcount, "capstone dataset/appcount")
+
+```
+
 The results will be summarised in a network graph of the accounts in an attempt to detect how the community of resultant accounts are interacting and how the clustering is structured: can this be represented as a single cluster or is there any sequestering and can any interaction between the sequestered groups be found?
 
 ##steps to continue forward

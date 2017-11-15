@@ -49,3 +49,14 @@ ldiv <- textstat_lexdiv(x)
 
 #This calculates various measures that you can read up on in the documentation
 #The koRpus package contains even more measures like the MLTD. Try that too.
+
+
+library(qdapRegex)
+
+AppURL <- rm_between_multiple(tweetsdf$statusSource,"<",">")
+tweetsdf$App <- unlist(AppURL)
+
+appcount <- tweetsdf%>%group_by(App)%>%summarize(Count=n())%>%arrange(desc(Count))
+tweetsdf <- left_join(tweetsdf,appcount)
+
+tweetsdf$BoN <- ifelse(tweetsdf$Count>4,0,1)
