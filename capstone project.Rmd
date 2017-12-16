@@ -32,7 +32,8 @@ The R packages that will be utilised in this study are as follows (with one or t
 
 library(caret)
 library(igraph)
-library(twitteR)
+library(twitteR)  ##package has been deprecated in deferment to _rtweet_
+library(rtweet)
 library(streamR)
 library(RNeo4j)
 library(tidyverse)
@@ -43,11 +44,30 @@ library(koRpus)
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumer_key <- 'QpSBwPC1PwqUQ4eSMCVeXenDQ'
-consumer_secret <- '39YRwPaXF9u3TCvjqFaElSxmEEe7xcUJTzg0M2oa3egutPa6B4'
-access_token <- '1240280636-GFbqEWiGKiP17KmN4oyrFwdZwQBJEJA3BRy2TmW'
-access_secret <- 'vsnTNryz83p0XS4rSz6dwOmGRf0SZC2pPtxGnAkvUikSR'
+consumer_key <- 'qkgJvUbFX70rNn1K4uq9NAuVs'
+consumer_secret <- 'xOGEeIMUUTrCTkVwGXXwdu75kqVzEq2yzDJuZPrBwt9NfwwFJm'
+access_token <- ' 1240280636-lHi3fdKVZGNE6FsUlvY7y13RsqED0JQgmKY9f74'
+access_secret <- 'jaqKjy4O6O73rYzOxMSAlbqigZu4iaEClAestfrRBjBZo'
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+
+oauth_endpoints("twitter")
+
+myapp <- oauth_app("twitter",
+key = "OHIL9V7v7LikVwie2Vc3ltRxz",
+secret = "IMqsEB0p1H7JeBZ5qGMXZUjqhppwbLi2SZxCQFVga8c4TNCRu7")
+
+twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
+req <- GET("https://api.twitter.com/1.1/statuses/home_timeline.json",
+config(token = twitter_token))
+stop_for_status(req)
+content(req)
+
+
+## App-only authentication https://api.twitter.com/oauth2/token
+## Request token URL https://api.twitter.com/oauth/request_token
+## Authorize URL https://api.twitter.com/oauth/authorize
+## Access token URL https://api.twitter.com/oauth/access_token 
 
 
 library(reticulate)
@@ -70,10 +90,10 @@ flatbot <- flatten(flatterbot)
 newBotlist <- unname(sapply(flatbot, `[`, 2))
 
 
-#my_oauth <- OAuthFactory$new(consumerKey=consumer_key,consumerSecret=consumer_secret, requestURL=requestURL, accessURL=accessURL, authURL=authURL)
-#my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
-#save(my_oauth, file = "my_oauth.Rdata")
-load("~/R/github/springboard capstone/my_oauth.Rdata")
+my_oauth <- OAuthFactory$new(consumerKey=consumer_key,consumerSecret=consumer_secret, requestURL=requestURL, accessURL=accessURL, authURL=authURL)
+my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+save(my_oauth, file = "my_oauth.Rdata")
+load("~/R/github/springboard-capstone/my_oauth.Rdata")
 
 botAccts <- lookupUsers(newBotlist)
 botAcctlist <- twListToDF(botAccts)
@@ -225,6 +245,8 @@ shredDF <- recentTweetsDF %>% select(screenName, AppURL, App, Count, BoN)
 shredDF <- recentTweetsDF %>% select(screenName, App, Count, BoN)
 botDS <- left_join(botDS, shredDF, by = "screenName")
 botDS <- unique(botDS)
+methodCount <- botDS %>% group_by(screenName) %>% summarise(mCount=n())
+botDS <- left_join(botDS, methodCount)
 saveRDS(botDS, "capstone dataset/botDS")
 saveRDS(shredDF, "capstone dataset/shredDF")
 saveRDS(AppURL, "capstone dataset/AppURL")
