@@ -11,9 +11,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Detecting Bot Communities on Twitter and Determining Their Influence
 
-Social media imparts tremendous influence on the ongoing zeitgeist. This influence can have IRL (or real world) consequences and repercussions. The intent of the platform is to allow people of various backgrounds, but similar interests, to connect and form communities of the like-minded that is not tied to geospatial constraints. However, the reality is that various agents create and unleash *bot* accounts that disrupt those communities and alters the digital landscape.
+Social media commands a tremendous influence on the ongoing zeitgeist. This influence can have IRL (or real world) consequences and repercussions. The intent of the platform is to allow people of various backgrounds, but similar interests, to connect and form communities of the like-minded that is not tied to geospatial constraints. However, the reality is that various agents create and unleash *bot* accounts that disrupt those communities and alters the digital landscape making it at times a dark and hostile place.
 
-This project will focus on a selected set of *loaded* hashtags (meaning those whose LIWC is representative of a defined agenda) that command a respectable trending status to see whether or no it attracts these *bot* accounts and to what degree. Also to be investigated, is whether it is the human accounts or their *bot* counterparts that take the lead in establishing that trending status. The individual tweet atrributes to be looked at will include 
+This project will focus on a selected set of *loaded* hashtags (meaning those whose LIWC is representative of a defined agenda) that command a respectable trending status to see whether or no it attracts these *bot* accounts and to what degree. Also to be investigated, is whether it is the human accounts or their *bot* counterparts that take the lead in establishing that trending status. I'm using as a roadmap Erin Shellman's class assignment on classifying whether a Twitter account is a bot or not, the problem statement (as well as a description of the dataset) can be found here, https://github.com/erinshellman/BI-TECH-CP303/blob/master/projects/project%202/problem_statement_project_2.md.
+
+That project did not involve (nor describe) the gathering and ETL of the dataset presented to her students. The package I used to gather tweets to shape my dataset is as follows:
+
+1. I leveraged another college project to first gather Twitter accounts denoted to be bots, *Debot*, found here, https://github.com/nchavoshi/debot_api. Using an API key I selected my *hashtag* and collected a set of tweets that had used the *hashtag* and were determined (by this program) to be *bot* accounts. This set included whether or no the *tweet* was a *retweet*, a *reply* or an original *tweet*. 
+
+2. Utilising the _twitteR_ package (now deprecated and unuseable), I used the extracted account names from the group of tweets gathered from *Debot* step and gathered information on the accounts themselves, such as when the account was created and the number of tweets thus far.
+
+3. I isolated the tweets that were original
+
+
+### classification trees (as the aim is a textbook example of binary claddification); the markdown files can be found here, https://github.com/erinshellman/BI-TECH-CP303/blob/master/projects/project 2/classification-trees-in-R.Rmd, and here, https://github.com/erinshellman/BI-TECH-CP303/blob/master/projects/project%202/logistic-regression-in-R.Rmd.
+
+The individual tweet atrributes to be looked at will include 
 
 1. timestamp
 2. retweet status
@@ -24,15 +37,13 @@ On the various accounts themselves, this project will look to the following
 1. profile text
 2. profile pic (is it an egg)
 3. followers
-4. following
+### 4. following
 
 The R packages that will be utilised in this study are as follows (with one or two being dropped, dependent on subsequent decisions made in the experimental design)
 
-```{r, set-options, eval=FALSE, cache=FALSE}
-
 library(caret)
 library(igraph)
-library(twitteR)  ##package has been deprecated in deferment to _rtweet_
+library(httr)
 library(rtweet)
 library(streamR)
 library(RNeo4j)
@@ -40,6 +51,10 @@ library(tidyverse)
 library(stringr)
 library(quanteda)
 library(koRpus)
+
+```{r, set-options, eval=FALSE, cache=FALSE}
+
+library(twitteR)  ##package has been deprecated in deferment to _rtweet_
 
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
@@ -69,15 +84,19 @@ content(req)
 ## Authorize URL https://api.twitter.com/oauth/authorize
 ## Access token URL https://api.twitter.com/oauth/access_token 
 
+```
+
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 library(reticulate)
 library(XML)
-path_to_python <- "/usr/local/bin/python3.6"
+#path_to_python <- "/usr/local/bin/python3.6"
+path_to_python <- "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
 use_python(path_to_python)
 dbot=import("debot")
 db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
-#bots=htmlParse(db$get_related_bots('election2016'))#Change 'election2016' to any other topic of your interest
 cbots=htmlParse(db$get_related_bots('Charlottesville'))
+
 
 #Now parse the XML data into a dataframe
 botlist <- xmlToList(cbots)
@@ -89,6 +108,9 @@ remove(flatbot)
 flatbot <- flatten(flatterbot)
 newBotlist <- unname(sapply(flatbot, `[`, 2))
 
+```
+
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 my_oauth <- OAuthFactory$new(consumerKey=consumer_key,consumerSecret=consumer_secret, requestURL=requestURL, accessURL=accessURL, authURL=authURL)
 my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
@@ -106,6 +128,10 @@ acctNames <- row.names.data.frame(botAcctlist)
 # from <- "from:"
 # fromAccts <- paste(from, rownames(botAcctlist))
 # fromAccts <- gsub(" ", "", fromAccts[])
+
+```
+
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 library(stringr)
 #head(fromAccts)
@@ -137,7 +163,11 @@ groupedTweetsDF <- tweetsOPEN %>%
   group_by(screenName) %>%
   filter(screenName %in% botDS$screenName)
 castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
-<<<<<<< HEAD
+
+```
+
+
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 #using quanteda pkg
 langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
@@ -162,10 +192,9 @@ lex.div(measure="validation")
 ##text.tagged <- lapply(filenames, function(x) treetag(x, treetagger="manual", lang="en", TT.options=list(path=filepath, preset="en")))
 ##text.tagged[1]
 
+```
 
-
-=======
->>>>>>> origin/master
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 save(access_secret, access_token, accessURL, authURL, my_oauth, requestURL, consumer_key, consumer_secret, pgmform, wkForm, wkSession, workFlow, TI_html, filled_form, filled_wkForm, txtInspect, result, pgsession, result, file = "accessObjs")
 saveRDS(newBotlist, "newBotlist")
@@ -186,16 +215,19 @@ saveRDS(groupedTweetsDF, "groupedTweetsDF")
 saveRDS(castoffDF, "castoffDF")
 saveRDS(langDiv, "langDiv")
 saveRDS(botDiv, "botDiv")
-=======
+
 saveRDS(castoffTweetsDF, "castoffTweetsDF")
->>>>>>> origin/master
 #saveRDS(selectedTweetsDF, "selectedTweetsDF")
+
+```
 
 
 ##> unlist(paste(filter(tweetsOPEN, screenName == "15_margiecastro")$text, collapse = " | "))
 ##[1] "@mor1019chacha Kamo... | @mor1019chacha Paki tanong naman po @mor1019chacha  kung Pati ba ugali kaya niyang iparetoke,.kung Oo paretoke niya Kami# #SakangIsFine | #NewProfilePic https://t.co/bvQc2tWJZ5 | They are the most unforgettable group in KPOP WORLD. \n\n2NE1\nSNSD\nT-PARA\nKARA\nMISS A\n4MINUTE
 
 #save.image("brooklyn.Rdata")
+
+```{r, set-options, eval=FALSE, cache=FALSE}
 
 library(rvest)
 #code to log into webpage to submit tweets for LIWC evaluation
@@ -213,6 +245,17 @@ filled_wkForm <- set_values(wkForm, 'text' = unlist(paste(filter(tweetsOPEN, scr
 result <- submit_form(wkSession, filled_wkForm)
 
 htmlParse(read_html(result$url))
+
+```
+
+```{r, set-options, eval=FALSE, cache=FALSE}
+
+library(rtweet)
+
+CTV <- search_tweets(
+"#Charlottesville", n = 18000, include_rts = FALSE
+)
+ts_plot(CTV)
 
 ```
 
