@@ -186,6 +186,8 @@ tagged.text <- treetag("./sample.txt", debug = TRUE)
 descr.tagged.text <- describe(tagged.text)[["lttr.distrib"]]
 lex.div(tagged.text)
 lex.div(measure="validation")
+tagged2.text <- tokenize("./sample.txt", lang="en")
+describe(tagged2.text)
 
 ##Use lapply for multiple texts
 ##filenames <- list.files(pattern="*.txt")
@@ -285,7 +287,7 @@ appcount <- recentTweetsDF%>%group_by(App)%>%summarize(Count=n())%>%arrange(desc
 recentTweetsDF <- left_join(recentTweetsDF,appcount)
 recentTweetsDF$BoN <- ifelse(recentTweetsDF$Count>4,0,1)
 shredDF <- recentTweetsDF %>% select(screenName, AppURL, App, Count, BoN)
-shredDF <- recentTweetsDF %>% select(screenName, App, Count, BoN)
+#shredDF <- recentTweetsDF %>% select(screenName, App, Count, BoN)
 botDS <- left_join(botDS, shredDF, by = "screenName")
 botDS <- unique(botDS)
 methodCount <- botDS %>% group_by(screenName) %>% summarise(mCount=n())
