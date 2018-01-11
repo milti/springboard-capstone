@@ -59,12 +59,13 @@ library(twitteR)  ##package has been deprecated in deferment to _rtweet_
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumer_key <- 'qkgJvUbFX70rNn1K4uq9NAuVs'
-consumer_secret <- 'xOGEeIMUUTrCTkVwGXXwdu75kqVzEq2yzDJuZPrBwt9NfwwFJm'
-access_token <- ' 1240280636-lHi3fdKVZGNE6FsUlvY7y13RsqED0JQgmKY9f74'
-access_secret <- 'jaqKjy4O6O73rYzOxMSAlbqigZu4iaEClAestfrRBjBZo'
-setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
-setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+consumerKey <- "qkgJvUbFX70rNn1K4uq9NAuVs"
+consumerSecret <- "xOGEeIMUUTrCTkVwGXXwdu75kqVzEq2yzDJuZPrBwt9NfwwFJm"
+accessToken <- "1240280636-lHi3fdKVZGNE6FsUlvY7y13RsqED0JQgmKY9f74"
+accessTokenSecret <- "jaqKjy4O6O73rYzOxMSAlbqigZu4iaEClAestfrRBjBZo"
+handle <- "conjja"
+
+setup_twitter_oauth(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 
 oauth_endpoints("twitter")
 
