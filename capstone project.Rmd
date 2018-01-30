@@ -59,10 +59,10 @@ library(twitteR)  ##package has been deprecated in deferment to _rtweet_
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumerKey <- "qkgJvUbFX70rNn1K4uq9NAuVs"
-consumerSecret <- "xOGEeIMUUTrCTkVwGXXwdu75kqVzEq2yzDJuZPrBwt9NfwwFJm"
-accessToken <- "1240280636-lHi3fdKVZGNE6FsUlvY7y13RsqED0JQgmKY9f74"
-accessTokenSecret <- "jaqKjy4O6O73rYzOxMSAlbqigZu4iaEClAestfrRBjBZo"
+consumerKey <- "dMs3guHk4y6DDdztO0JDmUTqB"
+consumerSecret <- "csna8h6XWQMd3ZppMBCUuNNXDTuBAVJLNK7QphZRCd5plkES0z"
+accessToken <- "1240280636-PTXARRUrytYtijYXyPWKptD9cHSCMzlAujQkATI"
+accessTokenSecret <- "uo8INEJbhhe43AIXfSs5veSZ6i7IHbh8Tn1LLlYTJqOm2"
 handle <- "conjja"
 
 setup_twitter_oauth(consumerKey, consumerSecret, accessToken, accessTokenSecret)
@@ -70,10 +70,10 @@ setup_twitter_oauth(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 oauth_endpoints("twitter")
 
 myapp <- oauth_app("twitter",
-key = "OHIL9V7v7LikVwie2Vc3ltRxz",
-secret = "IMqsEB0p1H7JeBZ5qGMXZUjqhppwbLi2SZxCQFVga8c4TNCRu7")
+key = "qkgJvUbFX70rNn1K4uq9NAuVs",
+secret = "xOGEeIMUUTrCTkVwGXXwdu75kqVzEq2yzDJuZPrBwt9NfwwFJm")
 
-twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
+twitter_token <- oauth1.0_token(oauth_endpoints, myapp)
 req <- GET("https://api.twitter.com/1.1/statuses/home_timeline.json",
 config(token = twitter_token))
 stop_for_status(req)
