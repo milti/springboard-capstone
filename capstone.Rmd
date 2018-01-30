@@ -120,7 +120,7 @@ table(cut(botDS$acct_created, breaks = "6 month"))
 
 
 ```
-Binning the creation times of these accounts doesn't uncover anything that interesting. Although, the 6 month period with the highest number, "2015-09-01", was in the months following DJT declaring himslef a candidate for the GOP nomination. But there is nothing of note to suggest the two are related.
+Binning the creation times of these accounts doesn't uncover anything that interesting. Although, the 6 month period with the highest number, "2015-09-01", was in the months following DJT declaring himslef a candidate for the GOP nomination. Changing the size of the time bins, also highlights that the peak of account creation (for this set of suspected accounts) also have a noticeable peak immediately surrounding the time following the announcement.
 
 The R packages that will be utilised in this study are as follows (with one or two being dropped, dependent on subsequent decisions made in the experimental design)
 
