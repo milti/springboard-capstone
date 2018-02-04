@@ -11,13 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Detecting Bot Communities on Twitter and Determining Their Influence
 
-Social media commands a tremendous influence on the ongoing zeitgeist. This influence can have IRL (or real world) consequences and repercussions. The intent of the platform is to allow people of various backgrounds, but similar interests, to connect and form communities of the like-minded that is not tied to geospatial constraints. However, the reality is that various agents create and unleash *bot* accounts that disrupt those communities and alters the digital landscape making it at times a dark and hostile place.
+Social media commands a tremendous influence on the ongoing zeitgeist, at times to the point of crafting and shaping it. This influence can have IRL (or real world) consequences and repercussions. The intent of the platform is to allow people of various backgrounds, but similar interests, to connect and form communities of the like-minded that is not limited by geospatial constraints. However, the reality is that various agents create and unleash *bot* accounts that disrupt those communities and alters the digital landscape making it at times a dark and hostile place.
 
-This project will focus on a selected set of *loaded* hashtags (meaning those whose LIWC is representative of a defined agenda) that command a respectable trending status to see whether or no it attracts these *bot* accounts and to what degree. Also to be investigated, is whether it is the human accounts or their *bot* counterparts that take the lead in establishing that trending status. I'm using as a roadmap Erin Shellman's class assignment on classifying whether a Twitter account is a bot or not, the problem statement (as well as a description of the dataset) can be found here, https://github.com/erinshellman/BI-TECH-CP303/blob/master/projects/project%202/problem_statement_project_2.md.
+This project will focus on a selected single *loaded* hashtag (meaning one whose LIWC is representative of a defined agenda) that command a respectable trending status to see whether or no it attracts these *bot* accounts and to what degree. Also to be investigated, is whether it is the human accounts or their *bot* counterparts that take the lead in establishing that trending status. I'm using as a roadmap Erin Shellman's class assignment on classifying whether a Twitter account is a bot or not, the problem statement (as well as a description of the dataset) can be found here, https://github.com/erinshellman/BI-TECH-CP303/blob/master/projects/project%202/problem_statement_project_2.md.
 
 That project did not involve (nor describe) the gathering and ETL of the dataset presented to her students. The package I used to gather tweets to shape my dataset is as follows:
 
-1. I leveraged another college project to first gather Twitter accounts denoted to be bots, *Debot*, found here, https://github.com/nchavoshi/debot_api. Using an API key I selected my *hashtag* and collected a set of tweets that had used the *hashtag* and were determined (by this program) to be *bot* accounts. This set included whether or no the *tweet* was a *retweet*, a *reply* or an original *tweet*. 
+1. I leveraged another college project to first gather Twitter accounts denoted to be bots, *Debot*, found here, https://github.com/nchavoshi/debot_api. Using an API key I selected my *hashtag* ("Charlottesville) and collected a set of tweets that had used the *hashtag* and were determined (by this program) to be from *bot* accounts. This set included whether or no the *tweet* was a *retweet*, a *reply* or an original *tweet*. 
 
 ```{r, set-options, eval=FALSE, cache=FALSE}
 
@@ -31,7 +31,7 @@ db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
 cbots=htmlParse(db$get_related_bots('Charlottesville'))
 
 
-#Now parse the XML data into a dataframe
+#Now parse the XML data into a list of screennames or accounts.
 botlist <- xmlToList(cbots)
 
 library(listviewer)
@@ -43,6 +43,17 @@ newBotlist <- unname(sapply(flatbot, `[`, 2))
 
 ```
 
+The *newBotlist* object is a nested list of 646 names:
+
+R >  head(str(newBotlist)) 
+List of 646
+ $ : chr "15_margiecastro"
+ $ : chr "2001shaira"
+ $ : chr "78fb1da7564c40c"
+ $ : chr "AaaRDieeee"
+ ....
+ 
+ 
 2. Utilising the _twitteR_ package, I used the extracted account names from the group of tweets gathered from *Debot* step and gathered information on the accounts themselves, such as when the account was created and the number of tweets thus far.
 
 
