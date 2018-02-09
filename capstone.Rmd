@@ -115,6 +115,8 @@ We can see that several of the variables for the goal dataset are already in pla
  $ mean_retweets           : num  1.58 1.2 1.33 1 2.5 ...
  $ reply_rate              : num  0 0.2455 0.0492 0.5312 0.4419 ...
 
+
+
 3. I then took the same accounts and gathered 200 of the most recent tweets (or as many as I could retrieve) from those accounts to get enough messaging to test the account's linguistic diversity.
 
 
@@ -193,6 +195,29 @@ latestStatDF <- twListToDF(latestStat)
 botDS$acct_age <- abs(as.numeric(botDS$acct_age, units = "mins"))
 botDS <- left_join(botDS, latestStatDF[, c("screenName", "statusesCount")], by = "screenName")
 botDS$mean_time_between_tweets = botDS$acct_age/botDS$statusesCount #time measured in minutes
+
+divLang <- as.data.frame(textstat_lexdiv(dfm(CTV$text)))
+divLang[mapply(is.infinite, divLang)] <- NA
+divLang[mapply(is.nan, divLang)] <- NA
+divMeans <- rowMeans(divLang, na.rm = TRUE)
+
+CTV$langDiv <- divMeans
+ctvDS <- data.frame(CTV$screen_name, CTV$bot, CTV$acct_created, CTV$acct_created, "julianCreated", "acct_age", CTV$langDiv, "Count", "mean_time_betwn_tweets", "App", "App.BoN", "mCount", "Month")
+ctvnames <- names(ctvDS)
+ctvnames[1] <- "screenName"
+ctvnames[2] <- "bot"
+ctvnames[3] <- "acct_created"
+ctvnames[4] <- "julianCreated"
+ctvnames[5] <- "acct_age"
+ctvnames[6] <- "langDiv"
+ctvnames[7] <- "Count"
+ctvnames[8] <- "mean_time_betwn_tweets"
+ctvnames[9] <- "App"
+ctvnames[10] <- "App.BoN"
+ctvnames[11] <- "mCount"
+ctvnames[12] <- "Month"
+colnames(ctvDS)
+colnames(ctvDS) <- ctvnames
 
 
 ```
