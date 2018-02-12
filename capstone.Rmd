@@ -194,6 +194,7 @@ latestStatDF <- twListToDF(latestStat)
 
 botDS$acct_age <- abs(as.numeric(botDS$acct_age, units = "mins"))
 botDS <- left_join(botDS, latestStatDF[, c("screenName", "statusesCount")], by = "screenName")
+
 botDS$mean_time_betwn_tweets = botDS$acct_age/botDS$statusesCount #time measured in minutes
 
 divLang <- as.data.frame(textstat_lexdiv(dfm(CTV$text)))
@@ -219,8 +220,6 @@ ctvnames[12] <- "Month"
 colnames(ctvDS)
 colnames(ctvDS) <- ctvnames
 
-<<<<<<< HEAD
-=======
 CTVsub <- CTVstats[, c(3, 8:11, 13, 21)]
 CTVbnd <- bind_cols(ctvDS, CTVsub)
 #check that the bind worked as desired
@@ -247,11 +246,8 @@ names(botDS)
 shredCTV$mean_time_betwn_tweets = as.integer(shredCTV$acct_age/shredCTV$statusesCount)
 
 
-
 shredCTV <- shredCTV[, c(1,2,16,14,13,15,3,4,5,6,7,8,9,10,11,12)]
 
-
->>>>>>> finally got means for CTV data
 
 ```
 
