@@ -203,7 +203,8 @@ divLang[mapply(is.nan, divLang)] <- NA
 divMeans <- rowMeans(divLang, na.rm = TRUE)
 
 CTV$langDiv <- divMeans
-ctvDS <- data.frame(CTV$screen_name, CTV$bot, CTV$acct_created, CTV$acct_created, "julianCreated", "acct_age", CTV$langDiv, "Count", "mean_time_betwn_tweets", "App", "App.BoN", "mCount", "Month")
+ctvDS <- data.frame(CTV$screen_name, CTV$bot, CTV$acct_created, "julianCreated", "acct_age", CTV$langDiv, "Count", "mean_time_betwn_tweets", "App", "App.BoN", "mCount", "Month")
+
 ctvnames <- names(ctvDS)
 ctvnames[1] <- "screenName"
 ctvnames[2] <- "bot"
@@ -217,13 +218,14 @@ ctvnames[9] <- "App"
 ctvnames[10] <- "App.BoN"
 ctvnames[11] <- "mCount"
 ctvnames[12] <- "Month"
+ctvDS$acct_age <- abs(as.numeric(ctvDS$acct_age, units = "mins"))
 colnames(ctvDS)
 colnames(ctvDS) <- ctvnames
 
-CTVsub <- CTVstats[, c(3, 8:11, 13, 21)]
+CTVsub <- CTVstats[, c(3, 8:11, 21)]
 CTVbnd <- bind_cols(ctvDS, CTVsub)
 #check that the bind worked as desired
-CTVbnd %>% filter(CTVbnd$screenName != CTVbnd$screenName1)
+CTVbnd %>% filter(CTVbnd$screenName != CTVbnd$screen_name)
 CTVbnd %>% filter(CTVbnd$acct_created != CTVbnd$account_created_at)
 
 shredCTV <- CTVbnd[, c(1:12, 14:17)]
@@ -242,6 +244,7 @@ colnames(shredCTV)
 colnames(shredCTV) <- botnames
 names(shredCTV)
 names(botDS)
+
 
 shredCTV$mean_time_betwn_tweets = as.integer(shredCTV$acct_age/shredCTV$statusesCount)
 
