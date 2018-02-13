@@ -197,12 +197,30 @@ botDS <- left_join(botDS, latestStatDF[, c("screenName", "statusesCount")], by =
 
 botDS$mean_time_betwn_tweets = botDS$acct_age/botDS$statusesCount #time measured in minutes
 
+```
+
+Now, using _rtweet_, I've scraped some tweets using the same *hashtag*, #Charlottesville, without regard as to any supposition that the accounts likely be a *bot*. The resulting *twitter* tibble is trasnformed as follows:
+
+```{r, set-options, eval=FALSE, cache=FALSE}
+
+library(rtweet)
+
+CTV <- search_tweets(
+"#Charlottesville", n = 18000, include_rts = FALSE
+)
+ts_plot(CTV)
+
+#get some LISC values for the tweets (or CTV$text)
+
 divLang <- as.data.frame(textstat_lexdiv(dfm(CTV$text)))
 divLang[mapply(is.infinite, divLang)] <- NA
 divLang[mapply(is.nan, divLang)] <- NA
 divMeans <- rowMeans(divLang, na.rm = TRUE)
 
 CTV$langDiv <- divMeans
+
+#start compiling the interim dataframe with values desired for ETL
+
 ctvDS <- data.frame(CTV$screen_name, CTV$bot, CTV$acct_created, "julianCreated", "acct_age", CTV$langDiv, "Count", "mean_time_betwn_tweets", "App", "App.BoN", "mCount", "Month")
 
 ctvnames <- names(ctvDS)
@@ -222,17 +240,29 @@ ctvDS$acct_age <- abs(as.numeric(ctvDS$acct_age, units = "mins"))
 colnames(ctvDS)
 colnames(ctvDS) <- ctvnames
 
+#perform a lookup of the user data in CTV 
+CTVstats <- users_data(CTV)
+names(CTVstats)
+
+#use those variables in CTVstats that will be needed in the final dataframe
+
 CTVsub <- CTVstats[, c(3, 8:11, 21)]
 CTVbnd <- bind_cols(ctvDS, CTVsub)
 #check that the bind worked as desired
 CTVbnd %>% filter(CTVbnd$screenName != CTVbnd$screen_name)
 CTVbnd %>% filter(CTVbnd$acct_created != CTVbnd$acct_created1)
 
+#now create the final dataframe for this set of accounts of possible human origin
+
 shredCTV <- CTVbnd[, c(1:12, 13, 14:17)]
+
 #get the order of the columns for both DFs
+
 names(botDS)
 names(shredCTV)
-#correct and set order for shredCTV
+
+#correct and set order for shredCTV in anticipation of combining them for the final dataframe for determining *bot or not*.
+
 shredCTV <- shredCTV[, c(1,2,16,14,13,15,3,4,5,6,7,8,9,10,11,12)]
 names(shredCTV)
 names(botDS)
@@ -248,6 +278,11 @@ names(botDS)
 
 shredCTV$mean_time_betwn_tweets = as.integer(shredCTV$acct_age/shredCTV$statusesCount)
 
+#determine if some accounts use more than one method to tweet
+methodCountCTV <- shredCTV %>% group_by(screenName, App) %>% summarise(count=n())
+shredCTV <- left_join(shredCTV, methodCountCTV, by = c("screenName", "App"))
+shredCTV$mCount <- shredCTV$count
+shredCTV <- shredCTV[,-16]
 
 # shredCTV <- shredCTV[, c(1,2,16,14,13,15,3,4,5,6,7,8,9,10,11,12)]
 
@@ -255,13 +290,6 @@ shredCTV$mean_time_betwn_tweets = as.integer(shredCTV$acct_age/shredCTV$statuses
 ```
 
 ```{r, set-options, eval=FALSE, cache=FALSE}
-
-library(rtweet)
-
-CTV <- search_tweets(
-"#Charlottesville", n = 18000, include_rts = FALSE
-)
-ts_plot(CTV)
 
 ```
 
