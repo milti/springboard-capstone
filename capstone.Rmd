@@ -282,8 +282,12 @@ shredCTV$mean_time_betwn_tweets = as.integer(shredCTV$acct_age/shredCTV$statuses
 
 methodCountCTV <- shredCTV %>% group_by(screenName, App) %>% summarise(count=n())
 shredCTV <- left_join(shredCTV, methodCountCTV, by = c("screenName", "App"))
-shredCTV$mCount <- shredCTV$count
-shredCTV <- shredCTV[,-16]
+xn <- methodCountCTV %>% group_by(screenName) %>% summarise(mCount = n()) 
+names(shredCTV)
+shredCTV <- shredCTV[,-15]
+shredCTV <- left_join(shredCTV, xn[,c("screenName", "mCount")], by = "screenName")
+names(shredCTV)
+
 #using the number of times the App is used in this set, arbitrate the likelihood that the account uses a *bot* application
 
 shredCTV$App.BoN <- ifelse(shredCTV$Count >4,0,1)
@@ -295,21 +299,19 @@ shredCTV$App.BoN <- ifelse(shredCTV$Count >4,0,1)
 
 shredCVL <- bind_rows(botDS, shredCTV)
 
-```
-
 #lets take an intital look.
 summary(shredCVL)
 ```
 
 R >  summary(shredCVL)
-  screenName             bot        statusesCount      friendsCount   followersCount   
- Length:2618        Min.   :0.000   Min.   :      0   Min.   :    0   Min.   :      0  
- Class :character   1st Qu.:0.000   1st Qu.:   2524   1st Qu.:  258   1st Qu.:    277  
- Mode  :character   Median :0.000   Median :  13042   Median :  661   Median :    915  
-                    Mean   :0.195   Mean   :  45605   Mean   : 1683   Mean   :  10366  
-                    3rd Qu.:0.000   3rd Qu.:  41709   3rd Qu.: 1678   3rd Qu.:   2296  
-                    Max.   :1.000   Max.   :1742257   Max.   :68232   Max.   :6604309  
-                                    NA's   :29        NA's   :29      NA's   :29       
+  screenName             bot    statusesCount      friendsCount   followersCount   
+ Length:2618        Min.   :0   Min.   :      0   Min.   :    0   Min.   :      0  
+ Class :character   1st Qu.:0   1st Qu.:   2524   1st Qu.:  258   1st Qu.:    277  
+ Mode  :character   Median :0   Median :  13042   Median :  661   Median :    915  
+                    Mean   :0   Mean   :  45605   Mean   : 1683   Mean   :  10366  
+                    3rd Qu.:0   3rd Qu.:  41709   3rd Qu.: 1678   3rd Qu.:   2296  
+                    Max.   :0   Max.   :1742257   Max.   :68232   Max.   :6604309  
+                                NA's   :29        NA's   :29      NA's   :29       
   listedCount     acct_created                 julianCreated        acct_age      
  Min.   :    0   Min.   :2007-02-08 04:24:56   Length:2618       Min.   :   1361  
  1st Qu.:    4   1st Qu.:2010-04-16 14:56:21   Class :difftime   1st Qu.: 766986  
@@ -318,21 +320,22 @@ R >  summary(shredCVL)
  3rd Qu.:  104   3rd Qu.:2015-07-21 08:54:27                     3rd Qu.:3534304  
  Max.   :39981   Max.   :2017-12-11 13:58:41                     Max.   :5209655  
  NA's   :29                                                                       
-    langDiv      mean_time_betwn_tweets     App                Count         App.BoN    
- Min.   : 0.39   Min.   :      0        Length:2618        Min.   :   1   Min.   :0.00  
- 1st Qu.: 2.95   1st Qu.:     40        Class :character   1st Qu.:  62   1st Qu.:0.00  
- Median : 5.57   Median :    127        Mode  :character   Median : 412   Median :0.00  
- Mean   : 5.59   Mean   :  12156                           Mean   : 772   Mean   :0.03  
- 3rd Qu.: 7.50   3rd Qu.:    549                           3rd Qu.: 657   3rd Qu.:0.00  
- Max.   :29.07   Max.   :3598898                           Max.   :6238   Max.   :1.00  
- NA's   :193     NA's   :38                                NA's   :164    NA's   :164   
-     mCount     
- Min.   : 1.00  
- 1st Qu.: 1.00  
- Median : 1.00  
- Mean   : 4.49  
- 3rd Qu.: 4.00  
- Max.   :34.00  
+    langDiv      mean_time_betwn_tweets     App                Count     
+ Min.   : 0.39   Min.   :      0        Length:2618        Min.   :   1  
+ 1st Qu.: 2.95   1st Qu.:     40        Class :character   1st Qu.:  62  
+ Median : 5.57   Median :    127        Mode  :character   Median : 412  
+ Mean   : 5.59   Mean   :  12156                           Mean   : 772  
+ 3rd Qu.: 7.50   3rd Qu.:    549                           3rd Qu.: 657  
+ Max.   :29.07   Max.   :3598898                           Max.   :6238  
+ NA's   :193     NA's   :38                                NA's   :164   
+    App.BoN         mCount    
+ Min.   :0.00   Min.   :1.00  
+ 1st Qu.:0.00   1st Qu.:1.00  
+ Median :0.00   Median :1.00  
+ Mean   :0.03   Mean   :1.29  
+ 3rd Qu.:0.00   3rd Qu.:1.00  
+ Max.   :1.00   Max.   :4.00  
+ NA's   :164                  
                 
 ```{r, set-options, eval=FALSE, cache=FALSE}
 
@@ -341,31 +344,39 @@ R >  summary(shredCVL)
 summary(shredCVL[, c(-1, -5)])
 ```
 
-R >  summary(shredCVL[, -c(1, 7, 8, 12)])
-      bot        statusesCount      friendsCount   followersCount     listedCount   
- Min.   :0.000   Min.   :      0   Min.   :    0   Min.   :      0   Min.   :    0  
- 1st Qu.:0.000   1st Qu.:   2524   1st Qu.:  258   1st Qu.:    277   1st Qu.:    4  
- Median :0.000   Median :  13042   Median :  661   Median :    915   Median :   22  
- Mean   :0.195   Mean   :  45605   Mean   : 1683   Mean   :  10366   Mean   :  143  
- 3rd Qu.:0.000   3rd Qu.:  41709   3rd Qu.: 1678   3rd Qu.:   2296   3rd Qu.:  104  
- Max.   :1.000   Max.   :1742257   Max.   :68232   Max.   :6604309   Max.   :39981  
-                 NA's   :29        NA's   :29      NA's   :29        NA's   :29     
-    acct_age          langDiv      mean_time_betwn_tweets     Count         App.BoN    
- Min.   :   1361   Min.   : 0.39   Min.   :      0        Min.   :   1   Min.   :0.00  
- 1st Qu.: 766986   1st Qu.: 2.95   1st Qu.:     40        1st Qu.:  62   1st Qu.:0.00  
- Median :2275666   Median : 5.57   Median :    127        Median : 412   Median :0.00  
- Mean   :2221613   Mean   : 5.59   Mean   :  12156        Mean   : 772   Mean   :0.03  
- 3rd Qu.:3534304   3rd Qu.: 7.50   3rd Qu.:    549        3rd Qu.: 657   3rd Qu.:0.00  
- Max.   :5209655   Max.   :29.07   Max.   :3598898        Max.   :6238   Max.   :1.00  
-                   NA's   :193     NA's   :38             NA's   :164    NA's   :164   
-     mCount     
- Min.   : 1.00  
- 1st Qu.: 1.00  
- Median : 1.00  
- Mean   : 4.49  
- 3rd Qu.: 4.00  
- Max.   :34.00  
-          
+R >  summary(shredCVL[, c(-1, -5)])
+      bot    statusesCount      friendsCount    listedCount   
+ Min.   :0   Min.   :      0   Min.   :    0   Min.   :    0  
+ 1st Qu.:0   1st Qu.:   2524   1st Qu.:  258   1st Qu.:    4  
+ Median :0   Median :  13042   Median :  661   Median :   22  
+ Mean   :0   Mean   :  45605   Mean   : 1683   Mean   :  143  
+ 3rd Qu.:0   3rd Qu.:  41709   3rd Qu.: 1678   3rd Qu.:  104  
+ Max.   :0   Max.   :1742257   Max.   :68232   Max.   :39981  
+             NA's   :29        NA's   :29      NA's   :29     
+  acct_created                 julianCreated        acct_age          langDiv     
+ Min.   :2007-02-08 04:24:56   Length:2618       Min.   :   1361   Min.   : 0.39  
+ 1st Qu.:2010-04-16 14:56:21   Class :difftime   1st Qu.: 766986   1st Qu.: 2.95  
+ Median :2012-09-06 16:14:22   Mode  :numeric    Median :2275666   Median : 5.57  
+ Mean   :2012-11-08 23:14:03                     Mean   :2221613   Mean   : 5.59  
+ 3rd Qu.:2015-07-21 08:54:27                     3rd Qu.:3534304   3rd Qu.: 7.50  
+ Max.   :2017-12-11 13:58:41                     Max.   :5209655   Max.   :29.07  
+                                                                   NA's   :193    
+ mean_time_betwn_tweets     App                Count         App.BoN    
+ Min.   :      0        Length:2618        Min.   :   1   Min.   :0.00  
+ 1st Qu.:     40        Class :character   1st Qu.:  62   1st Qu.:0.00  
+ Median :    127        Mode  :character   Median : 412   Median :0.00  
+ Mean   :  12156                           Mean   : 772   Mean   :0.03  
+ 3rd Qu.:    549                           3rd Qu.: 657   3rd Qu.:0.00  
+ Max.   :3598898                           Max.   :6238   Max.   :1.00  
+ NA's   :38                                NA's   :164    NA's   :164   
+     mCount    
+ Min.   :1.00  
+ 1st Qu.:1.00  
+ Median :1.00  
+ Mean   :1.29  
+ 3rd Qu.:1.00  
+ Max.   :4.00  
+               
                 
 There are a couple of factor variables above that are not classed as such. Let's do so now.
 
@@ -374,11 +385,13 @@ There are a couple of factor variables above that are not classed as such. Let's
 shredCVL$bot <- factor(shredCVL$bot)
 shredCVL$App.BoN <- factor(shredCVL$App.BoN)
 
+
+summary(shredCVL[, -c(1, 7, 8, 12)])
 ```
 R >  summary(shredCVL[, -c(1, 7, 8, 12)])
  bot      statusesCount      friendsCount   followersCount     listedCount   
- 0:2107   Min.   :      0   Min.   :    0   Min.   :      0   Min.   :    0  
- 1: 511   1st Qu.:   2524   1st Qu.:  258   1st Qu.:    277   1st Qu.:    4  
+ 0:2618   Min.   :      0   Min.   :    0   Min.   :      0   Min.   :    0  
+          1st Qu.:   2524   1st Qu.:  258   1st Qu.:    277   1st Qu.:    4  
           Median :  13042   Median :  661   Median :    915   Median :   22  
           Mean   :  45605   Mean   : 1683   Mean   :  10366   Mean   :  143  
           3rd Qu.:  41709   3rd Qu.: 1678   3rd Qu.:   2296   3rd Qu.:  104  
@@ -392,15 +405,18 @@ R >  summary(shredCVL[, -c(1, 7, 8, 12)])
  3rd Qu.:3534304   3rd Qu.: 7.50   3rd Qu.:    549        3rd Qu.: 657              
  Max.   :5209655   Max.   :29.07   Max.   :3598898        Max.   :6238              
                    NA's   :193     NA's   :38             NA's   :164               
-     mCount     
- Min.   : 1.00  
- 1st Qu.: 1.00  
- Median : 1.00  
- Mean   : 4.49  
- 3rd Qu.: 4.00  
- Max.   :34.00  
-                
-R >  
+     mCount    
+ Min.   :1.00  
+ 1st Qu.:1.00  
+ Median :1.00  
+ Mean   :1.29  
+ 3rd Qu.:1.00  
+ Max.   :4.00   
+
+in_train <- createDataPartition(y = shredCVL$bot, p = .75, list = FALSE)
+training_set <- shredCVL[in_train,]
+testing_set <- shredCVL[-in_train,]
+
 
 ```{r, eval=FALSE}
 #getting the source of the tweet (phone, web, other)
