@@ -1,0 +1,80 @@
+---
+title: "R Notebook"
+output: pdf_document
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+
+library(caret)
+library(rpart)
+library(tidyverse)
+library(rpart.plot)
+
+
+readRDS("capstone/dataset/shredCVL")
+
+table(shredCVL$bot)
+
+in_train <- createDataPartition(y = shredCVL$bot, p = .75, list = FALSE)
+testing_set <- shredCVL[-in_train,]
+training_set <- shredCVL[in_train,]
+
+str(training_set)
+table(testing_set$bot)
+table(training_set$bot)
+121/654
+390/1964
+
+# both ratios hold to an 20:80 proportion.
+
+
+model <- rpart(formula = bot ~., data = shredCVL, method = "class")
+
+str(model)
+print(model)
+
+formula <- bot ~ statusesCount + friendsCount + followersCount + listedCount + acct_age + langDiv + mean_time_betwn_tweets + Count + mCount
+
+model <- rpart(formula, data = shredCVL, method = "class")
+
+str(model)
+print(model)
+
+plotcp(model)
+
+rpart.plot(model)
+
+library(GGally)
+
+ggpairs(training_set[,c(-1,-2,-7,-8,-12,-14)])
+
+
+ggplot(filter(training_set, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram()
+
+ggplot(filter(training_set, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram() + 
+  facet_grid(bot ~.)
+
+# how about the number of people they follow?
+ggplot(training_set, aes(x = friendsCount, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+
+
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
