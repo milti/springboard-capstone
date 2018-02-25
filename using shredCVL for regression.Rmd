@@ -247,8 +247,10 @@ pred3/2 <- predict(object = model32,
 ```{r}
 
 # Display the results
+
 rpart.plot(x = model31, yesno = 2, type = 0, extra = 0)
 rpart.plot(x = model32, yesno = 2, type = 0, extra = 0)
+
 
 ######################
 # Total number of rows in the credit data frame
@@ -269,16 +271,19 @@ rpart.plot(x = model32, yesno = 2, type = 0, extra = 0)
 #testing_set <- credit[-train_indices, ]  
 
 # Train the model (to predict 'default')
+
 modelClass <- rpart(formula, 
                       data = training_set, 
                       method = "class", na.action = na.omit)
 
 # Look at the model output                      
+
 print(modelClass)
 
 #Evaluate performance
 #library(caret)
 # Generate predicted classes using the model object
+
 class_prediction <- predict(object = modelClass,  
                             newdata = testing_set,   
                             type = "class")  
@@ -287,16 +292,18 @@ class_prediction <- predict(object = modelClass,
 confusionMatrix(data = class_prediction,       
                 reference = testing_set$bot)  
 
+
 #Minimize impurity measure - Gini Index
 #Lower the Gini Index, higher the purity of the split
 # Train a gini-based model
+
 model41 <- rpart(formula, 
                        data = training_set, 
                        method = "class",
                        parms = list(split = 'gini'))
 
 # Train an information-based model
-model42 <- rpart(formula, 
+model42 <- rpart(formula,
                        data = training_set, 
                        method = "class",
                        parms = list(split = 'information'))
@@ -317,18 +324,19 @@ pred42 <- predict(object = model42,
 # Compare classification error
 library(Metrics)
 
+
 ce(actual = testing_set$bot, 
    predicted = pred1)
 ce(actual = testing_set$bot, 
    predicted = pred2)  
 dt_preds <- pred2
 
-###################################
 ```
 
 ```{r}
 
 ```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
