@@ -148,7 +148,6 @@ print(boost_model)
 plot(boost_model)
 plot(varImp(boost_model))
 
-#TODO: remove this?
 summary(boost_model$finalModel)
 
 # predict
