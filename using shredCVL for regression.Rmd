@@ -143,19 +143,11 @@ boost_model = train(formula,
                     method = 'gbm',
                     data = training_set,
                     verbose = FALSE, na.action = na.omit)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 
 print(boost_model)
 plot(boost_model)
 plot(varImp(boost_model))
 
-<<<<<<< HEAD
-=======
-#TODO: remove this?
->>>>>>> origin/master
 summary(boost_model$finalModel)
 
 # predict
@@ -181,19 +173,6 @@ head(randomForest::getTree(rf_model$finalModel, k = 5, labelVar = TRUE))
 # predict
 rf_predictions = predict(rf_model, testing_set)
 confusionMatrix(rf_predictions, testing_set$bot)
-<<<<<<< HEAD
-=======
-=======
-
-print(boost_model)
-plot(boost_model)
-plot(varImp(boost_model))
-
-#TODO: remove this?
-summary(boost_model$finalModel)
->>>>>>> origin/master
->>>>>>> origin/master
-
 
 ```
 
