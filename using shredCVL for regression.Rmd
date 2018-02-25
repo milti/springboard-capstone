@@ -17,6 +17,10 @@ library(rpart.plot)
 
 readRDS("capstone/dataset/shredCVL")
 
+```
+
+```{r}
+
 table(shredCVL$bot)
 
 in_train <- createDataPartition(y = shredCVL$bot, p = .75, list = FALSE)
@@ -32,27 +36,47 @@ table(training_set$bot)
 # both ratios hold to an 20:80 proportion.
 
 
-model <- rpart(formula = bot ~., data = shredCVL, method = "class")
+model1 <- rpart(formula = bot ~., data = shredCVL, method = "class")
 
-str(model)
-print(model)
+str(model1)
+print(model1)
 
 formula <- bot ~ statusesCount + friendsCount + followersCount + listedCount + acct_age + langDiv + mean_time_betwn_tweets + Count + mCount
 
-model <- rpart(formula, data = shredCVL, method = "class")
+model2 <- rpart(formula, data = shredCVL, method = "class")
 
-str(model)
-print(model)
+str(model2)
+print(model2)
 
-plotcp(model)
+plotcp(model2)
 
-rpart.plot(model)
+rpart.plot(model2)
 
 library(GGally)
 
 ggpairs(training_set[,c(-1,-2,-7,-8,-12,-14)])
 
+ggpairs(training_set[ , c('followersCount', 'friendsCount', 'acct_age', 
+                  'langDiv', 'statusesCount', 'bot')])
 
+ggplot(filter(training_set, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram(binwidth = 3)
+
+ggplot(filter(training_set, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram(binwidth = 3) + 
+  facet_grid(bot ~.)
+
+# how about the number of people they follow?
+ggplot(training_set, aes(x = friendsCount, fill = bot)) +
+  geom_histogram(binwidth = 3000) +
+  facet_grid(bot ~.)
+
+
+
+# Some people have a lot of followers, but most don't. we need to lob off
+# the long tail so we can see the distribution better
 ggplot(filter(training_set, followersCount < 100), 
        aes(x = followersCount, fill = bot)) +
   geom_histogram()
@@ -67,9 +91,69 @@ ggplot(training_set, aes(x = friendsCount, fill = bot)) +
   geom_histogram() +
   facet_grid(bot ~.)
 
+# it's a little hard to see
+ggplot(filter(training_set, friendsCount < 2500), 
+       aes(x = friendsCount, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# what about account age?
+ggplot(training_set, aes(x = acct_age, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# lexical diversity
+ggplot(training_set, aes(x = langDiv, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# what are the average values?
+meanDiv = 
+  training_set %>%
+    group_by(bot) %>%
+    summarize(meanDiv = mean(langDiv, na.rm = TRUE))
+
+# add it to the plot
+ggplot(training_set, aes(x = langDiv, fill = bot)) +
+  geom_histogram() +
+  geom_vline(data = meanDiv, aes(xintercept = meanDiv)) + 
+  facet_grid(bot ~.)
 
 
+```
 
+```{r}
+
+bagged_model = train(formula,
+                    method = 'treebag',
+                    data = training_set, na.action = na.omit)
+
+print(bagged_model)
+plot(varImp(bagged_model))
+
+bagged_predictions = predict(bagged_model, testing_set)
+confusionMatrix(bagged_predictions, testing_set$bot)
+
+
+```
+
+```{r}
+
+boost_model = train(formula,
+                    method = 'gbm',
+                    data = training_set,
+                    verbose = FALSE, na.action = na.omit)
+
+print(boost_model)
+plot(boost_model)
+plot(varImp(boost_model))
+
+#TODO: remove this?
+summary(boost_model$finalModel)
+
+# predict
+boost_predictions = predict(boost_model, testing_set)
+confusionMatrix(boost_predictions, testing_set$bot)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
