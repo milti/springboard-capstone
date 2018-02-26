@@ -1,25 +1,26 @@
 ---
 title: "R Notebook"
+geometry: "left=1cm,right=2cm,top=1cm,bottom=2cm"
 output: pdf_document
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+```{r include=FALSE} 
+knitr::opts_chunk$set(message = FALSE, warning = FALSE) 
+```
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+```{r, message = FALSE}
 
-```{r}
-
-library(caret)
 library(rpart)
-library(tidyverse)
+library(caret)
+suppressMessages(library("tidyverse"))
 library(rpart.plot)
 
 
-readRDS("capstone/dataset/shredCVL")
+shredCVL <- readRDS("capstone dataset/shredCVL")
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 table(shredCVL$bot)
 
@@ -41,7 +42,7 @@ model1 <- rpart(formula = bot ~., data = shredCVL, method = "class")
 str(model1)
 print(model1)
 
-formula <- bot ~ statusesCount + friendsCount + followersCount + listedCount + acct_age + langDiv + mean_time_betwn_tweets + Count + mCount
+formula <- bot ~ statusesCount + friendsCount + followersCount + listedCount + acct_age + langDiv + mean_time_betwn_tweets + mCount
 
 model2 <- rpart(formula, data = shredCVL, method = "class")
 
@@ -122,7 +123,7 @@ ggplot(training_set, aes(x = langDiv, fill = bot)) +
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 bagged_model = train(formula,
                     method = 'treebag',
@@ -132,12 +133,12 @@ print(bagged_model)
 plot(varImp(bagged_model))
 
 bagged_predictions = predict(bagged_model, testing_set)
-confusionMatrix(bagged_predictions, testing_set$bot)
+#confusionMatrix(bagged_predictions, testing_set$bot)
 
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 boost_model = train(formula,
                     method = 'gbm',
@@ -146,16 +147,16 @@ boost_model = train(formula,
 
 print(boost_model)
 plot(boost_model)
-plot(varImp(boost_model))
+#plot(varImp(boost_model))
 
 summary(boost_model$finalModel)
 
 # predict
 boost_predictions = predict(boost_model, testing_set)
-confusionMatrix(boost_predictions, testing_set$bot)
+#confusionMatrix(boost_predictions, testing_set$bot)
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 rf_model = train(formula, 
                  data = training_set, 
                  method = 'rf',
@@ -172,34 +173,17 @@ head(randomForest::getTree(rf_model$finalModel, k = 5, labelVar = TRUE))
 
 # predict
 rf_predictions = predict(rf_model, testing_set)
-confusionMatrix(rf_predictions, testing_set$bot)
+#confusionMatrix(rf_predictions, testing_set$bot)
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # Display the results
 rpart.plot(x = model2, yesno = 2, type = 0, extra = 0)
 
-######################
-# Total number of rows in the credit data frame
-#credit <- creditsub
-#n <- nrow(credit)
 
-# Number of rows for the training set (80% of the dataset)
-#n_train <- round(0.8 * n) 
-
-# Create a vector of indices which is an 80% random sample
-#set.seed(123)
-#train_indices <- sample(1:n, n_train)
-
-# Subset the credit data frame to training indices only
-#training_set <- credit[train_indices, ]  
-
-# Exclude the training indices to create the test set
-#testing_set <- credit[-train_indices, ]  
-
-# Train the model (to predict 'default')
+# Train the model (to predict 'bot')
 model3 <- rpart(formula, 
                       data = training_set, 
                       method = "class", na.action = na.omit)
@@ -215,8 +199,8 @@ class_prediction <- predict(object = model3,
                             type = "class")  
 
 # Calculate the confusion matrix for the test set
-confusionMatrix(data = class_prediction,       
-                reference = testing_set$default)  
+#confusionMatrix(data = class_prediction,       
+ #               reference = testing_set$default)  
 
 #Minimize impurity measure - Gini Index
 #Lower the Gini Index, higher the purity of the split
@@ -238,13 +222,13 @@ pred31 <- predict(object = model31,
                  type = 'class')    
 
 # Generate predictions on the validation set using the information model
-pred3/2 <- predict(object = model32, 
+pred32 <- predict(object = model32, 
                  newdata = testing_set,
                  type = "class")
 
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 # Display the results
 
@@ -253,24 +237,8 @@ rpart.plot(x = model32, yesno = 2, type = 0, extra = 0)
 
 
 ######################
-# Total number of rows in the credit data frame
-#credit <- creditsub
-#n <- nrow(credit)
 
-# Number of rows for the training set (80% of the dataset)
-#n_train <- round(0.8 * n) 
-
-# Create a vector of indices which is an 80% random sample
-#set.seed(123)
-#train_indices <- sample(1:n, n_train)
-
-# Subset the credit data frame to training indices only
-#training_set <- credit[train_indices, ]  
-
-# Exclude the training indices to create the test set
-#testing_set <- credit[-train_indices, ]  
-
-# Train the model (to predict 'default')
+# Train the model (to predict 'bot')
 
 modelClass <- rpart(formula, 
                       data = training_set, 
@@ -326,10 +294,10 @@ library(Metrics)
 
 
 ce(actual = testing_set$bot, 
-   predicted = pred1)
+   predicted = pred41)
 ce(actual = testing_set$bot, 
-   predicted = pred2)  
-dt_preds <- pred2
+   predicted = pred42)  
+dt_preds <- pred42
 
 ```
 
@@ -338,9 +306,5 @@ dt_preds <- pred2
 ```
 
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
