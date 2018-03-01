@@ -1,0 +1,238 @@
+---
+title: "shredCVL using Logistic regression in R"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: readable
+    toc: yes
+    toc_depth: 3
+date: "1 March, 2018"
+---
+
+```{r setup, include = FALSE}
+# my set-up
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/', echo=TRUE, warning=FALSE, message=FALSE)
+
+require(dplyr)
+require(ggplot2)
+require(GGally)
+require(caret)
+
+```
+
+# Introduction 
+
+*****For the second project we'll explore user data from shredCVL to identify accounts likely belonging to bots. The data set has variables about profile configuration
+(`default_profile`, `default_profile_image`), connectivity (`friendsCount`, 
+`followersCount`), and some information about the nature of their tweets 
+(`diversity`, `mean_mins_between_tweets`). Additionally, there's an outcome 
+variable called `bot` that denotes whether the account belongs to a bot 
+(`bot == 1`) or to a human (`bot == 0`).*********
+
+# Exploratory data analysis
+
+We've got a brand new data set, so let's familiarize ourselves by
+conducting an exploratory data analysis. Let's start by summarizing the whole
+data set to see what the variable values are.
+
+```{r}
+
+shredCVL <- readRDS("capstone dataset/shredCVL")
+
+summary(shredCVL)
+```
+
+From the summary, we can see that there are a couple `factor` variables in the 
+data set, `bot`, `default_profile`, `default_profile_image` and `geo_enabled`.
+Before exploring further, let's first tell R that those columns represent
+categorical variables.
+
+```{r}
+
+names(shredCVL)
+shredCVL$bot = factor(shredCVL$bot)
+shredCVL$App.BoN = factor(shredCVL$App.BoN)
+
+shredCVL <- shredCVL %>%
+    select(statusesCount,friendsCount,followersCount,listedCount,acct_age,langDiv,mean_time_betwn_tweets,mCount,bot)
+
+summary(shredCVL)
+```
+
+Like before, we can evaluate many relationships simultaneously with `ggpairs.`
+
+```{r ggpairs, fig.align = 'center', fig.width = 10, fig.height = 10}
+# inspect many trends with ggpairs
+ggpairs(shredCVL)
+```
+
+Once we have some initial hypotheses we can make more specific plots.
+```{r eda}
+ggplot(shredCVL, aes(x = followersCount, fill = bot)) +
+  geom_histogram()
+
+# Some people have a lot of followers, but most don't. we need to lob off
+# the long tail so we can see the distribution better
+ggplot(filter(shredCVL, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram()
+
+ggplot(filter(shredCVL, followersCount < 100), 
+       aes(x = followersCount, fill = bot)) +
+  geom_histogram() + 
+  facet_grid(bot ~.)
+
+# how about the number of people they follow?
+ggplot(shredCVL, aes(x = friendsCount, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# it's a little hard to see
+ggplot(filter(shredCVL, friendsCount < 2500), 
+       aes(x = friendsCount, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# what about account age?
+ggplot(shredCVL, aes(x = acct_age, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# lexical diversity
+ggplot(shredCVL, aes(x = langDiv, fill = bot)) +
+  geom_histogram() +
+  facet_grid(bot ~.)
+
+# what are the average values?
+avg_diversity = 
+  shredCVL %>%
+    group_by(bot) %>%
+    summarize(avg_diversity = mean(langDiv, na.rm = TRUE))
+
+# add it to the plot
+ggplot(shredCVL, aes(x = langDiv, fill = bot)) +
+  geom_histogram() +
+  geom_vline(data = avg_diversity, aes(xintercept = avg_diversity)) + 
+  facet_grid(bot ~.)
+```
+
+## Feature engineering
+
+Feature engineering is the process of creating predictor variables using domain
+knowledge. We can test hypotheses about the importance of various relationships
+by creating new predictors that help interrogate those relationships. For example,
+you might hypothesize a relationship between the number of tweets made
+and the lexical diversity that is relevant to model. To test that, make a new
+categorical variable indicating whether an account holder is a 'heavy tweeter', 'medium tweeter'
+or 'light tweeter':
+
+```{r feature-engineering}
+# the number of tweets per account has a long tail
+ggplot(shredCVL, aes(x = statusesCount)) +
+  geom_histogram()
+
+# break into three categories by quantile
+#quantile(shredCVL$statusesCount)
+
+# low tweeters will be the bottom 25%, 
+shredCVL$tweet_volume = NA
+shredCVL$tweet_volume = ifelse(shredCVL$statusesCount <= 188, 
+                              'Light Tweeter', 
+                              shredCVL$tweet_volume)
+
+shredCVL$tweet_volume = ifelse((shredCVL$statusesCount > 188 & shredCVL$statusesCount <= 2646), 
+                              'Medium Tweeter', 
+                              shredCVL$tweet_volume)
+
+shredCVL$tweet_volume = ifelse(shredCVL$statusesCount > 2646, 
+                              'Heavy Tweeter', 
+                              shredCVL$tweet_volume)
+
+shredCVL$tweet_volume = factor(shredCVL$tweet_volume, levels = c('Light Tweeter', 'Medium Tweeter', 'Heavy Tweeter'))
+
+# plot it!
+ggplot(shredCVL, aes(x = statusesCount)) +
+  geom_histogram(aes(fill = tweet_volume), bins = 100)
+
+# update the figure
+avg_diversity = 
+  shredCVL %>%
+    group_by(bot, tweet_volume) %>%
+    summarize(avg_diversity = mean(langDiv, na.rm = TRUE))
+
+ggplot(shredCVL, aes(x = langDiv, fill = bot)) +
+  geom_histogram() +
+  geom_vline(data = avg_diversity, aes(xintercept = avg_diversity)) + 
+  facet_grid(bot ~ tweet_volume)
+```
+
+# Logisitic Regression 
+
+## Training and testing sets
+
+```{r train-test, warning = FALSE, message = FALSE}
+set.seed(243)
+shredCVL = na.omit(shredCVL)
+
+# select the training observations
+in_train = createDataPartition(y = shredCVL$bot,
+                               p = 0.75, # 75% in train, 25% in test
+                               list = FALSE)
+
+train = shredCVL[in_train, ]
+test = shredCVL[-in_train, ]
+```
+
+## Training logisitic regressions
+
+Check out [this page](http://topepo.github.io/caret/Logistic_Regression.html)
+for more types of logistic regression to try out.
+
+```{r logistic-model, warning = FALSE}
+logistic_model = train(bot ~ ., 
+                       data = train,  
+                       method = 'glm',
+                       family = binomial, 
+                       preProcess = c('center', 'scale'))
+
+summary(logistic_model)
+plot(varImp(logistic_model))
+
+# test predictions
+logistic_predictions = predict(logistic_model, newdata = test)
+confusionMatrix(logistic_predictions, test$bot)
+```
+
+There are subset selection methods for logistic regression as well. Try out
+`method = 'glmStepAIC'`:
+```{r step-model, message = FALSE, results = 'hide'}
+# stepwise logisitic regression
+step_model = train(bot ~ ., 
+                   data = train,  
+                   method = 'glmStepAIC',
+                   family = binomial,
+                   preProcess = c('center', 'scale'))
+```
+
+```{r step-results}
+summary(step_model)
+
+step_predictions = predict(step_model, newdata = test)
+confusionMatrix(step_predictions, test$bot)
+```
+
+How do the models compare?
+
+```{r compare-models}
+# compare
+results = resamples(list(logistic_model = logistic_model, 
+                         step_model = step_model))
+
+# compare accuracy and kappa
+summary(results)
+
+# plot results
+dotplot(results)
+```

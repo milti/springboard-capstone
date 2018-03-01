@@ -10,7 +10,7 @@ library(caTools)
 library(C50)
 library(caretEnsemble)
 
-data("churn")
+
 data("Boston")
 #data("Sonar")
 Sonar <- readRDS("datacamp modules/Sonar")
