@@ -360,7 +360,7 @@ bwplot(resamples, metric = "ROC")
 # Create xyplot
 xyplot(resamples, metric = "ROC")
 
-# Create ensemble modell: stack
+# Create ensemble model: stack
 stack <- caretStack(model_list, method = "glm")
 
 # Look at summary
