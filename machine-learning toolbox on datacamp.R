@@ -232,7 +232,7 @@ max(model11[["results"]])
 model12 <- train(
   y ~ ., overfit,
   tuneGrid = expand.grid(alpha = 0:1,
-                         lambda = seq(0.0001, 1, length = 20)),
+  lambda = seq(0.0001, 1, length = 20)),
   method = "glmnet",
   trControl = myControl
 )
@@ -360,7 +360,7 @@ bwplot(resamples, metric = "ROC")
 # Create xyplot
 xyplot(resamples, metric = "ROC")
 
-# Create ensemble modell: stack
+# Create ensemble model: stack
 stack <- caretStack(model_list, method = "glm")
 
 # Look at summary
