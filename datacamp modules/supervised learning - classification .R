@@ -2,10 +2,10 @@
 # Load the 'class' package
 library(class)
 
-signs <- readRDS("datacamp modules/signs")
-next_sign <- readRDS("datacamp modules/next_sign")
-test_signs <- readRDS("datacamp modules/test_signs")
-signs_test <- readRDS("datacamp modules/signs_test")
+signs <- readRDS("signs")
+next_sign <- readRDS("next_sign")
+test_signs <- readRDS("test_signs")
+signs_test <- readRDS("signs_test")
 
 # Create a vector of labels
 sign_types <- signs$sign_type
@@ -58,8 +58,8 @@ head(sign_prob)
 head(sign_pred)
 
 
-where9am <- readRDS("datacamp modules/where9am")
-locations <- readRDS("datacamp modules/locations")
+where9am <- readRDS("where9am")
+locations <- readRDS("locations")
 
 # Compute P(A) 
 p_A <- nrow(subset(where9am, location == "office"))/nrow(where9am)
@@ -78,8 +78,8 @@ p_A_given_B
 # Load the naivebayes package
 library(naivebayes)
 
-saturday9am <- readRDS("datacamp modules/saturday9am")
-thursday9am <- readRDS("datacamp modules/thursday9am")
+saturday9am <- readRDS("saturday9am")
+thursday9am <- readRDS("thursday9am")
 
 # Build the location prediction model
 locmodel <- naive_bayes(location ~ daytype, data = where9am)
@@ -104,9 +104,9 @@ predict(locmodel, saturday9am, type = "prob")
 
 
 #naive bayes
-weekday_afternoon <- readRDS("datacamp modules/weekday_afternoon")
-weekday_evening <- readRDS("datacamp modules/weekday_evening")
-weekend_afternoon <- readRDS("datacamp modules/weekend_afternoon")
+weekday_afternoon <- readRDS("weekday_afternoon")
+weekday_evening <- readRDS("weekday_evening")
+weekend_afternoon <- readRDS("weekend_afternoon")
 
 # The 'naivebayes' package is loaded into the workspace already
 # Build a NB model of location
@@ -313,8 +313,6 @@ library(randomForest)
 #loans_test$pred <- predict(loan_model, loans_test)
 #mean(loans_test$pred == loans_test$outcome)
 
-=======
->>>>>>> edb5ff9d15187916a2e46f98157e142435305570
 
 # Grow a tree using all of the available applicant data
 #loan_model <- rpart(outcome ~ ., data = loans_train, method = "class", control = rpart.control(cp = 0))

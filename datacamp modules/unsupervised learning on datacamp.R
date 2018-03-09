@@ -2,7 +2,7 @@ library(caret)
 library(broom)
 library(e1071)
 
-x <- readRDS("datacamp modules/x")
+x <- readRDS("x")
 
 # Create the k-means model: km.out
 km.out <- kmeans(x, centers = 3, nstart = 20)
@@ -56,7 +56,7 @@ plot(1:15, wss, type = "b",
 # Set k equal to the number of clusters corresponding to the elbow location
 k <- 2
 
-pokemon <- readRDS("datacamp modules/pokemon")
+pokemon <- readRDS("pokemon")
 
 #since were not working with the entire dataset, lets get rid of the Total column
 pokemon <- pokemon[,-1]
@@ -140,7 +140,7 @@ pokemon.scaled <- scale(pokemon)
 hclust.pokemon <- hclust(dist(pokemon.scaled), method = "complete")
 
 km.pokemon <- kmeans(pokemon.scaled, centers = 3, nstart = 20, iter.max = 50)
-#km.pokemon <- readRDS("datacamp modules/km.pokemon")
+#km.pokemon <- readRDS("km.pokemon")
 
 # Apply cutree() to hclust.pokemon: cut.pokemon
 cut.pokemon <- cutree(hclust.pokemon, k = 3)
@@ -171,7 +171,7 @@ plot(cumsum(pve), xlab = "Principal Component",
      ylim = c(0, 1), type = "b")
 
 #resetting the pokemon dataset to include Total
-pokemon <- readRDS("datacamp modules/pokemon")
+pokemon <- readRDS("pokemon")
 
 # Mean of each variable
 colMeans(pokemon)

@@ -13,8 +13,8 @@ library(caretEnsemble)
 
 data("Boston")
 #data("Sonar")
-Sonar <- readRDS("datacamp modules/Sonar")
-overfit <- readRDS("datacamp modules/overfit")
+Sonar <- readRDS("./Sonar")
+overfit <- readRDS("./overfit")
 
 # Fit lm modell: model
 model <- lm(price ~ ., diamonds)
@@ -162,8 +162,8 @@ model7 <- train(Class ~ ., Sonar, method = "glm", trControl = myControl)
 model7
 
 #loading red wine dataset
-#wine <- read.csv2("datacamp modules/winequality-white.csv")
-wine <- readRDS("datacamp modules/wine")
+#wine <- read.csv2("./winequality-white.csv")
+wine <- readRDS("./wine")
 
 # Fit random forest: model8
 model8 <- train(
@@ -176,7 +176,7 @@ model8 <- train(
 # Print model8 to console
 model8
 
-wine <- readRDS("datacamp modules/wine")
+wine <- readRDS("./wine")
 
 # Fit random forest: model9
 model9 <- train(
@@ -192,7 +192,7 @@ model9
 # Plot modell
 plot(model9)
 
-wine <- readRDS("datacamp modules/wine")
+wine <- readRDS("./wine")
 
 # Fit random forest: model10
 #model10 <- train(
@@ -244,8 +244,8 @@ model12
 # Print maximum ROC statistic
 max(model12[["results"]][["ROC"]])
 
-breast_cancer_x <- readRDS("datacamp modules/breast_cancer_x")
-breast_cancer_y <- readRDS("datacamp modules/breast_cancer_y")
+breast_cancer_x <- readRDS("./breast_cancer_x")
+breast_cancer_y <- readRDS("./breast_cancer_y")
 
 # Apply median imputation: model13
 model13 <- train(
@@ -291,8 +291,8 @@ model16 <- train(
 # Print model16
 model16
 
-bloodbrain_x <- readRDS("datacamp modules/bloodbrain_x")
-bloodbrain_y <- readRDS("datacamp modules/bloodbrain_y")
+bloodbrain_x <- readRDS("./bloodbrain_x")
+bloodbrain_y <- readRDS("./bloodbrain_y")
 
 # Identify near zero variance predictors: remove_cols
 remove_cols <- nearZeroVar(bloodbrain_x, names = TRUE, 
@@ -316,8 +316,8 @@ model18 <- train(x = bloodbrain_x_small, y = bloodbrain_y, method = "glm")
 # Print modell to console
 model18
 
-churn_x <- readRDS("datacamp modules/churn_x")
-churn_y <- readRDS("datacamp modules/churn_y")
+churn_x <- readRDS("./churn_x")
+churn_y <- readRDS("./churn_y")
 
 # Create custom indices: myFolds
 myFolds <- createFolds(churn_y, k = 5)
