@@ -3,17 +3,80 @@ title: "R Notebook"
 output: pdf_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+Collecting the Data from Twitter: I'm going to describe the methods and packages used in gathering the data for this study.
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+I leveraged the _BotorNot_ API to cull some *bot* accounts centered around the *hashtag* #Charlottesville. The API has a Python interface and returns an XML frame.
+
+library(reticulate)
+library(XML)
+
+#path_to_python <- "/usr/local/bin/python3.6"
+path_to_python <- "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
+use_python(path_to_python)
+dbot=import("debot")
+db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
+cbots=htmlParse(db$get_related_bots('Charlottesville'))
+
+I then parsed the XML data into a dataframe:
+
+botlist <- xmlToList(cbots)
+
+library(listviewer)
+flatbot <- flatten(botlist)
+flatterbot <- flatten(flatbot)
+remove(flatbot)
+flatbot <- flatten(flatterbot)
+newBotlist <- unname(sapply(flatbot, `[`, 2))
+
+Then using the _twitteR_ package, I got the userdata associated with the accounts. 
+
+library(twittR)
+botAccts <- lookupUsers(newBotlist)
+botAcctlist <- twListToDF(botAccts)
+acctNames <- row.names.data.frame(botAcctlist)
+
+_purr_ gives me the mapping function to cull recent tweets for these accounts to determine lingusitic diversity later.
+
+library(purr)
+
+recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
+recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
+
+The tweets metadata include a treasure trove of information:
+
+
+I want to deal with direct tweets rather than retweets, so these are seperated. Further transformation is ensuring that the original tweets are grouped by account.
 
 ```{r}
-plot(cars)
+library(tidyverse)
+
+recentTweetsDF <- readRDS("capstone dataset/recentTweetsDF")
+
+AppURL <- rm_between_multiple(recentTweetsDF$statusSource,"<",">")
+recentTweetsDF$App <- unlist(AppURL)
+appcount <- recentTweetsDF%>%group_by(App)%>%summarize(Count=n())%>%arrange(desc(Count))
+recentTweetsDF <- left_join(recentTweetsDF,appcount)
+recentTweetsDF$BoN <- ifelse(recentTweetsDF$Count>4,0,1)
+shredDF <- recentTweetsDF %>% select(screenName, AppURL, App, Count, BoN)
+
+botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
+columnnames <- names(botDS)
+columnnames[1] <- "screenName"
+columnnames[2] <- "ID"
+columnnames[3] <- "acct_created"
+columnnames[4] <- "statusesCount"
+colnames(botDS) <- columnnames
+
+tweetsRT <- filter(recentTweetsDF, isRetweet == "TRUE")
+tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
+
+
+groupedTweetsDF <- tweetsOPEN %>%
+  group_by(screenName) %>%
+  filter(screenName %in% botDS$screenName)
+castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
+
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
