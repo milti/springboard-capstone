@@ -1,0 +1,422 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Notebook},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{R Notebook}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{}
+  \preauthor{}\postauthor{}
+  \date{}
+  \predate{}\postdate{}
+
+
+\begin{document}
+\maketitle
+
+Collecting the Data from Twitter: I'm going to describe the methods and
+packages used in gathering the data for this study.
+
+I leveraged the \emph{BotorNot} API to cull some \emph{bot} accounts
+centered around the \emph{hashtag} \#Charlottesville. The API has a
+Python interface and returns an XML frame.
+
+library(reticulate) \#\# library(XML)
+
+\hypertarget{path_to_python---usrlocalbinpython3.6}{%
+\subsection{\#path\_to\_python \textless{}-
+``/usr/local/bin/python3.6''}\label{path_to_python---usrlocalbinpython3.6}}
+
+\hypertarget{path_to_python--}{%
+\subsection{path\_to\_python \textless{}-}\label{path_to_python--}}
+
+\begin{verbatim}
+  "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
+\end{verbatim}
+
+\hypertarget{use_pythonpath_to_python}{%
+\subsection{use\_python(path\_to\_python)}\label{use_pythonpath_to_python}}
+
+\hypertarget{dbotimportdebot}{%
+\subsection{dbot=import(``debot'')}\label{dbotimportdebot}}
+
+\hypertarget{db-dbotdebotyocr3mkac7u6hjkzrnnock2jjnwrqgsfwwyo8yob-this-is-my-api-key-cbotshtmlparsedbget_related_botscharlottesville}{%
+\subsection{\texorpdfstring{db =
+dbot\(DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb') #This is my API key ## cbots=htmlParse(db\)get\_related\_bots(`Charlottesville'))}{db = dbotDeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb') \#This is my API key \#\# cbots=htmlParse(dbget\_related\_bots(`Charlottesville'))}}\label{db-dbotdebotyocr3mkac7u6hjkzrnnock2jjnwrqgsfwwyo8yob-this-is-my-api-key-cbotshtmlparsedbget_related_botscharlottesville}}
+
+I then parsed the XML data into a dataframe:
+
+\hypertarget{botlist---xmltolistcbots}{%
+\subsection{botlist \textless{}-
+xmlToList(cbots)}\label{botlist---xmltolistcbots}}
+
+\hypertarget{librarylistviewer}{%
+\subsection{library(listviewer)}\label{librarylistviewer}}
+
+\hypertarget{flatbot---flattenbotlist}{%
+\subsection{flatbot \textless{}-
+flatten(botlist)}\label{flatbot---flattenbotlist}}
+
+\hypertarget{flatterbot---flattenflatbot}{%
+\subsection{flatterbot \textless{}-
+flatten(flatbot)}\label{flatterbot---flattenflatbot}}
+
+\hypertarget{removeflatbot}{%
+\subsection{remove(flatbot)}\label{removeflatbot}}
+
+\hypertarget{flatbot---flattenflatterbot}{%
+\subsection{flatbot \textless{}-
+flatten(flatterbot)}\label{flatbot---flattenflatterbot}}
+
+\hypertarget{newbotlist---unnamesapplyflatbot-2}{%
+\subsection{\texorpdfstring{newBotlist \textless{}-
+unname(sapply(flatbot, \texttt{{[}},
+2))}{newBotlist \textless{}- unname(sapply(flatbot, {[}, 2))}}\label{newbotlist---unnamesapplyflatbot-2}}
+
+Then using the \emph{twitteR} package, I got the userdata associated
+with the accounts.
+
+\hypertarget{librarytwittr}{%
+\subsection{library(twittR)}\label{librarytwittr}}
+
+\hypertarget{botaccts---lookupusersnewbotlist}{%
+\subsection{botAccts \textless{}-
+lookupUsers(newBotlist)}\label{botaccts---lookupusersnewbotlist}}
+
+\hypertarget{botacctlist---twlisttodfbotaccts}{%
+\subsection{botAcctlist \textless{}-
+twListToDF(botAccts)}\label{botacctlist---twlisttodfbotaccts}}
+
+Those variables are:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{botAcctlist <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"capstone dataset/botAcctlist"}\NormalTok{)}
+
+
+\KeywordTok{names}\NormalTok{(botAcctlist) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "description"       "statusesCount"     "followersCount"   
+##  [4] "favoritesCount"    "friendsCount"      "url"              
+##  [7] "name"              "created"           "protected"        
+## [10] "verified"          "screenName"        "location"         
+## [13] "lang"              "id"                "listedCount"      
+## [16] "followRequestSent" "profileImageUrl"
+\end{verbatim}
+
+We can see that several of the variables for the goal dataset are
+already in place: statusesCount, followersCount, etc. Not all of the
+final variables are in place as they will be determined by a
+transformation of available data. In order to ensure the character set
+is usable, I'll set it explicitly. For convenience, let's list the
+available data structures here:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{botAcctlist}\OperatorTok{$}\NormalTok{description <-}\StringTok{ }\KeywordTok{iconv}\NormalTok{(botAcctlist}\OperatorTok{$}\NormalTok{description, }\StringTok{"latin1"}\NormalTok{, }\StringTok{"ASCII"}\NormalTok{)}
+\NormalTok{botAcctlist}\OperatorTok{$}\NormalTok{name <-}\StringTok{ }\KeywordTok{iconv}\NormalTok{(botAcctlist}\OperatorTok{$}\NormalTok{name, }\StringTok{"latin1"}\NormalTok{, }\StringTok{"ASCII"}\NormalTok{)}
+
+\KeywordTok{str}\NormalTok{(botAcctlist)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    375 obs. of  17 variables:
+##  $ description      : chr  "in order to be happy be contented of what God give you." "Joaquin's Wife Forever na kame\n@JaoquinRedReyes Follow me (04-02-16)\n@JoaquinRedReyes My 51st Follower\n\nI LOVE GOD" "" "young dumb broke highschool kid" ...
+##  $ statusesCount    : num  2931 2613 4495 41202 7228 ...
+##  $ followersCount   : num  126 217 15 1083 145 ...
+##  $ favoritesCount   : num  6408 2384 454 14232 1301 ...
+##  $ friendsCount     : num  578 396 114 957 103 885 443 358 146 465 ...
+##  $ url              : chr  NA NA NA NA ...
+##  $ name             : chr  "Margie" "BabyGirl" "Rowena Talania" NA ...
+##  $ created          : POSIXct, format: "2013-10-20 02:13:13" "2016-01-23 11:10:22" ...
+##  $ protected        : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ verified         : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ screenName       : chr  "15_margiecastro" "2001shaira" "78fb1da7564c40c" "AaaRDieeee" ...
+##  $ location         : chr  "certified #KN# #2NE1 #FANS" "" "" "" ...
+##  $ lang             : chr  "en" "en" "en" "en" ...
+##  $ id               : chr  "1973517494" "4802624365" "3653941454" "2207227844" ...
+##  $ listedCount      : num  1 0 2 5 0 10 0 13 6 3 ...
+##  $ followRequestSent: logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ profileImageUrl  : chr  "http://pbs.twimg.com/profile_images/876396144095485952/_o_wX4uK_normal.jpg" "http://pbs.twimg.com/profile_images/737845398153240576/XsQH_Cc9_normal.jpg" "http://pbs.twimg.com/profile_images/835394002291576832/OUGCAyZQ_normal.jpg" "http://pbs.twimg.com/profile_images/891305317891317760/1_LU3ksF_normal.jpg" ...
+\end{verbatim}
+
+\emph{purr} gives me the mapping function to cull recent tweets for
+these accounts to determine lingusitic diversity later.
+
+\hypertarget{librarystringr}{%
+\subsection{library(stringr)}\label{librarystringr}}
+
+\hypertarget{librarypurr}{%
+\subsection{library(purr)}\label{librarypurr}}
+
+\hypertarget{acctnames---row.names.data.framebotacctlist}{%
+\subsection{acctNames \textless{}-
+row.names.data.frame(botAcctlist)}\label{acctnames---row.names.data.framebotacctlist}}
+
+\hypertarget{unlistedbots---unlistbotacctlistscreenname}{%
+\subsection{unlistedBots \textless{}-
+unlist(botAcctlist{[}{]}\$screenName)}\label{unlistedbots---unlistbotacctlistscreenname}}
+
+\hypertarget{recenttweetsds---mapunlistedbots-searchtwitter.x-resulttype-recent}{%
+\subsection{recentTweetsDS \textless{}- map(unlistedBots{[}{]},
+\textasciitilde{}searchTwitteR(.x, resultType =
+``recent'',}\label{recenttweetsds---mapunlistedbots-searchtwitter.x-resulttype-recent}}
+
+\begin{verbatim}
+    n=200))
+\end{verbatim}
+
+\hypertarget{recenttweetsdf---twlisttodfflattenrecenttweetsds}{%
+\subsection{recentTweetsDF \textless{}-
+twListToDF(flatten(recentTweetsDS))}\label{recenttweetsdf---twlisttodfflattenrecenttweetsds}}
+
+To regularise the character set in the tweets:
+
+\hypertarget{recenttweetsdftext---iconvrecenttweetsdftext-latin1-ascii}{%
+\subsection{\texorpdfstring{recentTweetsDF\(text <- iconv(recentTweetsDF\)text,
+``latin1'',
+``ASCII'')}{recentTweetsDFtext \textless{}- iconv(recentTweetsDFtext, ``latin1'', ``ASCII'')}}\label{recenttweetsdftext---iconvrecenttweetsdftext-latin1-ascii}}
+
+The metadata in the recent tweets dataframe are named as follows, and
+the data structures are listed below:
+
+\hypertarget{namesrecenttweetsdf}{%
+\subsection{names(recentTweetsDF)}\label{namesrecenttweetsdf}}
+
+{[}1{]} ``text'' ``favorited'' ``favoriteCount'' ``replyToSN''
+``created''\\
+{[}6{]} ``truncated'' ``replyToSID'' ``id'' ``replyToUID''
+``statusSource'' {[}11{]} ``screenName'' ``retweetCount'' ``isRetweet''
+``retweeted'' ``longitude''\\
+{[}16{]} ``latitude''
+
+\hypertarget{strrecenttweetsdf}{%
+\subsection{str(recentTweetsDF)}\label{strrecenttweetsdf}}
+
+`data.frame': 15764 obs. of 16 variables: \$ text : chr NA NA ``RT
+@Espanto2001: Ate Kathryn Bernardo mentioned me in her live\ldots{}I
+have accomplished all of my goals in life\ldots{}''\textbar{}
+\textbf{truncated} NA \ldots{} \$ favorited : logi FALSE FALSE FALSE
+FALSE FALSE FALSE \ldots{} \$ favoriteCount: num 0 0 0 0 0 0 0 0 0 0
+\ldots{} \$ replyToSN : chr ``15\_margiecastro'' NA NA NA \ldots{} \$
+created : POSIXct, format: ``2017-10-30 12:39:45'' ``2017-10-29
+23:24:21'' \ldots{} \$ truncated : logi FALSE FALSE FALSE FALSE FALSE
+FALSE \ldots{} \$ replyToSID : chr ``917535662080802816'' NA NA NA
+\ldots{} \$ id : chr ``924979133611876353'' ``924778966744838146''
+``924653161784078337'' ``923396568392200192'' \ldots{} \$ replyToUID :
+chr ``1973517494'' NA NA NA \ldots{} \$ statusSource : chr ``Twitter for
+Android'' ``Twitter for Android'' \ldots{} \$ screenName : chr
+``katrinacathe'' ``15\_margiecastro'' ``15\_margiecastro''
+``15\_margiecastro'' \ldots{} \$ retweetCount : num 0 441 3164 44 350
+\ldots{} \$ isRetweet : logi FALSE TRUE TRUE TRUE TRUE FALSE \ldots{} \$
+retweeted : logi FALSE FALSE FALSE FALSE FALSE FALSE \ldots{} \$
+longitude : chr NA NA NA NA \ldots{} \$ latitude : chr NA NA NA NA
+\ldots{}
+
+Note that this introduces \emph{NA} entries into the dataframe. An
+important note for later. To reiterate, this dataframe contains accounts
+that have been classified as bots.
+
+I want to deal with direct tweets rather than retweets, so these are
+seperated. Further transformation is ensuring that the original tweets
+are grouped by account.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(qdapRegex)}
+
+\NormalTok{recentTweetsDF <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"capstone dataset/recentTweetsDF"}\NormalTok{)}
+\NormalTok{recentTweetsDF}\OperatorTok{$}\NormalTok{text <-}\StringTok{ }\KeywordTok{iconv}\NormalTok{(recentTweetsDF}\OperatorTok{$}\NormalTok{text, }\StringTok{"latin1"}\NormalTok{, }\StringTok{"ASCII"}\NormalTok{)}
+
+\NormalTok{AppURL <-}\StringTok{ }\KeywordTok{rm_between_multiple}\NormalTok{(recentTweetsDF}\OperatorTok{$}\NormalTok{statusSource,}\StringTok{"<"}\NormalTok{,}\StringTok{">"}\NormalTok{)}
+
+\NormalTok{recentTweetsDF}\OperatorTok{$}\NormalTok{App <-}\StringTok{ }\KeywordTok{unlist}\NormalTok{(AppURL)}
+
+\NormalTok{appcount <-}\StringTok{ }\NormalTok{recentTweetsDF }\OperatorTok{%>%}\StringTok{      }
+\StringTok{    }\KeywordTok{group_by}\NormalTok{(App) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{    }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{Count=}\KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{    }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(Count))}
+\NormalTok{recentTweetsDF <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(recentTweetsDF,appcount)}
+
+\NormalTok{recentTweetsDF}\OperatorTok{$}\NormalTok{BoN <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(recentTweetsDF}\OperatorTok{$}\NormalTok{Count}\OperatorTok{>}\DecValTok{4}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+
+\NormalTok{shredDF <-}\StringTok{ }\NormalTok{recentTweetsDF }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(screenName, App, Count, BoN)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{botDS <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(botAcctlist}\OperatorTok{$}\NormalTok{screenName, botAcctlist}\OperatorTok{$}\NormalTok{id, botAcctlist}\OperatorTok{$}\NormalTok{created, botAcctlist}\OperatorTok{$}\NormalTok{statusesCount, }\DataTypeTok{langDiv =} \DecValTok{0}\NormalTok{, }\DataTypeTok{mean_time_betwn_tweets =} \DecValTok{0}\NormalTok{, }\DataTypeTok{bot =} \DecValTok{0}\NormalTok{)}
+\NormalTok{columnnames <-}\StringTok{ }\KeywordTok{names}\NormalTok{(botDS)}
+\NormalTok{columnnames[}\DecValTok{1}\NormalTok{] <-}\StringTok{ "screenName"}
+\NormalTok{columnnames[}\DecValTok{2}\NormalTok{] <-}\StringTok{ "ID"}
+\NormalTok{columnnames[}\DecValTok{3}\NormalTok{] <-}\StringTok{ "acct_created"}
+\NormalTok{columnnames[}\DecValTok{4}\NormalTok{] <-}\StringTok{ "statusesCount"}
+\KeywordTok{colnames}\NormalTok{(botDS) <-}\StringTok{ }\NormalTok{columnnames}
+
+\NormalTok{tweetsRT <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(recentTweetsDF, isRetweet }\OperatorTok{==}\StringTok{ "TRUE"}\NormalTok{)}
+\NormalTok{tweetsOPEN <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(recentTweetsDF, isRetweet }\OperatorTok{!=}\StringTok{ "TRUE"}\NormalTok{)}
+\CommentTok{#tweeters <- unique(tweetsOPEN$screenName)}
+\CommentTok{#length(tweeters)}
+
+\NormalTok{botDS <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(botDS, shredDF, }\DataTypeTok{by =} \StringTok{"screenName"}\NormalTok{)}
+
+\NormalTok{botDS <-}\StringTok{ }\NormalTok{botDS[, }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{14}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{18}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{12}\NormalTok{, }\DecValTok{13}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{9}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{)]}
+
+
+\NormalTok{groupedTweetsDF <-}\StringTok{ }\NormalTok{tweetsOPEN }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(screenName) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(screenName }\OperatorTok{%in%}\StringTok{ }\NormalTok{botDS}\OperatorTok{$}\NormalTok{screenName)}
+\NormalTok{castoffDF <-}\StringTok{ }\KeywordTok{setdiff}\NormalTok{(tweetsOPEN, groupedTweetsDF)}
+
+\CommentTok{#binning the account creation column}
+\KeywordTok{table}\NormalTok{(}\KeywordTok{cut}\NormalTok{(botDS}\OperatorTok{$}\NormalTok{acct_created, }\DataTypeTok{breaks =} \StringTok{"6 month"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+library(quanteda)
+
+\#using quanteda pkg langDiv \textless{}-
+textstat\_lexdiv(dfm(groupedTweetsDF\$text))
+
+botDiv \textless{}- groupedTweetsDF \%\textgreater{}\%
+group\_by(screenName) summarise(meanDiv = mean(langDiv))
+
+botDS \textless{}- left\_join(botDS, botDiv)
+botDS\(langDiv <- botDS\)meanDiv
+
+botDS \textless{}- data.frame(botAcctlist\(screenName, botAcctlist\)id,
+botAcctlist\(created,  botAcctlist\)statusesCount, langDiv = 0,
+mean\_time\_betwn\_tweets = 0, bot = 0) columnnames \textless{}-
+names(botDS) columnnames{[}1{]} \textless{}- ``screenName''
+columnnames{[}2{]} \textless{}- ``ID'' columnnames{[}3{]} \textless{}-
+``acct\_created'' columnnames{[}4{]} \textless{}- ``statusesCount''
+colnames(botDS) \textless{}- columnnames
+
+tweetsRT \textless{}- filter(recentTweetsDF, isRetweet == ``TRUE'')
+tweetsOPEN \textless{}- filter(recentTweetsDF, isRetweet != ``TRUE'')
+
+groupedTweetsDF \textless{}- tweetsOPEN \%\textgreater{}\%
+group\_by(screenName) \%\textgreater{}\% filter(screenName \%in\%
+botDS\$screenName) castoffDF \textless{}- setdiff(tweetsOPEN,
+groupedTweetsDF)
+
+```
+
+
+\end{document}

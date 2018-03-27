@@ -1,65 +1,220 @@
 ---
 title: "R Notebook"
-output: pdf_notebook
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 Collecting the Data from Twitter: I'm going to describe the methods and packages used in gathering the data for this study.
 
 I leveraged the _BotorNot_ API to cull some *bot* accounts centered around the *hashtag* #Charlottesville. The API has a Python interface and returns an XML frame.
 
+```{r, eval = FALSE}
 library(reticulate)
-library(XML)
+##  library(XML)
 
-#path_to_python <- "/usr/local/bin/python3.6"
-path_to_python <- "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
-use_python(path_to_python)
-dbot=import("debot")
-db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb')#This is my API key
-cbots=htmlParse(db$get_related_bots('Charlottesville'))
+##  #path_to_python <- "/usr/local/bin/python3.6"
+##  path_to_python <- 
+      "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
+##  use_python(path_to_python)
+##  dbot=import("debot")
+##  db = dbot$DeBot('YocR3mKAc7U6hjKZrNnOCk2jjnWrqgSfwWYo8yOb') #This is my API key
+##  cbots=htmlParse(db$get_related_bots('Charlottesville'))
+```
 
 I then parsed the XML data into a dataframe:
 
-botlist <- xmlToList(cbots)
+```{r, eval=FALSE}
+##  botlist <- xmlToList(cbots)
 
-library(listviewer)
-flatbot <- flatten(botlist)
-flatterbot <- flatten(flatbot)
-remove(flatbot)
-flatbot <- flatten(flatterbot)
-newBotlist <- unname(sapply(flatbot, `[`, 2))
+##  library(listviewer)
+##  flatbot <- flatten(botlist)
+##  flatterbot <- flatten(flatbot)
+##  remove(flatbot)
+##  flatbot <- flatten(flatterbot)
+##  newBotlist <- unname(sapply(flatbot, `[`, 2))
 
+```
 Then using the _twitteR_ package, I got the userdata associated with the accounts. 
 
-library(twittR)
-botAccts <- lookupUsers(newBotlist)
-botAcctlist <- twListToDF(botAccts)
-acctNames <- row.names.data.frame(botAcctlist)
+```{r, eval=FALSE}
+##  library(twittR)
+##  botAccts <- lookupUsers(newBotlist)
+##  botAcctlist <- twListToDF(botAccts)
+
+```
+
+Those variables are:
+
+```{r}
+
+botAcctlist <- readRDS("capstone dataset/botAcctlist")
+
+
+names(botAcctlist) 
+
+```
+
+We can see that several of the variables for the goal dataset are already in place: statusesCount, followersCount, etc. Not all of the final variables are in place as they will be determined by a transformation of available data. In order to ensure the character set is usable, I'll set it explicitly. For convenience, let's list the available data structures here:
+
+```{r}
+
+
+botAcctlist$description <- iconv(botAcctlist$description, "latin1", "ASCII")
+botAcctlist$name <- iconv(botAcctlist$name, "latin1", "ASCII")
+
+str(botAcctlist)
+```
 
 _purr_ gives me the mapping function to cull recent tweets for these accounts to determine lingusitic diversity later.
 
-library(purr)
 
-recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent", n=200))
-recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
+##  library(stringr)
+##  library(purr)
 
-The tweets metadata include a treasure trove of information:
+##  acctNames <- row.names.data.frame(botAcctlist)
+##  unlistedBots <- unlist(botAcctlist[]$screenName)
+##  recentTweetsDS <- map(unlistedBots[], ~searchTwitteR(.x, resultType = "recent",
+        n=200))
+##  recentTweetsDF <- twListToDF(flatten(recentTweetsDS))
 
+To regularise the character set in the tweets:
+
+##  recentTweetsDF$text <- iconv(recentTweetsDF$text, "latin1", "ASCII")
+
+
+The metadata in the recent tweets dataframe are named as follows, and the data structures are listed below:
+
+##  names(recentTweetsDF)
+ [1] "text"          "favorited"     "favoriteCount" "replyToSN"     "created"      
+ [6] "truncated"     "replyToSID"    "id"            "replyToUID"    "statusSource" 
+[11] "screenName"    "retweetCount"  "isRetweet"     "retweeted"     "longitude"    
+[16] "latitude" 
+
+
+##  str(recentTweetsDF)
+'data.frame':	15764 obs. of  16 variables:
+ $ text         : chr  NA NA "RT @Espanto2001: Ate Kathryn Bernardo mentioned me in her live...I have accomplished all of my goals in life..."| __truncated__ NA ...
+ $ favorited    : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ favoriteCount: num  0 0 0 0 0 0 0 0 0 0 ...
+ $ replyToSN    : chr  "15_margiecastro" NA NA NA ...
+ $ created      : POSIXct, format: "2017-10-30 12:39:45" "2017-10-29 23:24:21" ...
+ $ truncated    : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ replyToSID   : chr  "917535662080802816" NA NA NA ...
+ $ id           : chr  "924979133611876353" "924778966744838146" "924653161784078337" "923396568392200192" ...
+ $ replyToUID   : chr  "1973517494" NA NA NA ...
+ $ statusSource : chr  "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>" "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>" ...
+ $ screenName   : chr  "katrinacathe" "15_margiecastro" "15_margiecastro" "15_margiecastro" ...
+ $ retweetCount : num  0 441 3164 44 350 ...
+ $ isRetweet    : logi  FALSE TRUE TRUE TRUE TRUE FALSE ...
+ $ retweeted    : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ longitude    : chr  NA NA NA NA ...
+ $ latitude     : chr  NA NA NA NA ...
+
+
+Note that this introduces *NA* entries into the dataframe. An important note for later. To reiterate, this dataframe contains accounts that have been classified as bots. 
 
 I want to deal with direct tweets rather than retweets, so these are seperated. Further transformation is ensuring that the original tweets are grouped by account.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
+
 library(tidyverse)
+library(qdapRegex)
 
 recentTweetsDF <- readRDS("capstone dataset/recentTweetsDF")
+recentTweetsDF$text <- iconv(recentTweetsDF$text, "latin1", "ASCII")
 
 AppURL <- rm_between_multiple(recentTweetsDF$statusSource,"<",">")
+
 recentTweetsDF$App <- unlist(AppURL)
-appcount <- recentTweetsDF%>%group_by(App)%>%summarize(Count=n())%>%arrange(desc(Count))
+
+appcount <- recentTweetsDF %>%      
+    group_by(App) %>% 
+    summarize(Count=n()) %>% 
+    arrange(desc(Count))
 recentTweetsDF <- left_join(recentTweetsDF,appcount)
+
 recentTweetsDF$BoN <- ifelse(recentTweetsDF$Count>4,0,1)
-shredDF <- recentTweetsDF %>% select(screenName, AppURL, App, Count, BoN)
+
+shredDF <- recentTweetsDF %>% select(screenName, App, Count, BoN)
+
+```
+
+
+```{r, set-options, eval=FALSE, cache=FALSE}
+
+
 
 botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created, botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
+columnnames <- names(botDS)
+columnnames[1] <- "screenName"
+columnnames[2] <- "ID"
+columnnames[3] <- "acct_created"
+columnnames[4] <- "statusesCount"
+colnames(botDS) <- columnnames
+
+tweetsRT <- filter(recentTweetsDF, isRetweet == "TRUE")
+tweetsOPEN <- filter(recentTweetsDF, isRetweet != "TRUE")
+#tweeters <- unique(tweetsOPEN$screenName)
+#length(tweeters)
+```
+
+```{r}
+botDS <- left_join(botDS, shredDF, by = "screenName")
+
+groupedTweetsDF <- tweetsOPEN %>%
+  group_by(screenName) %>%
+  filter(screenName %in% botDS$screenName)
+castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
+
+library(quanteda)
+
+#using quanteda pkg
+langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
+
+langDiv[which(!is.finite())] <- NA
+
+bo\tDiv <- groupedTweetsDF %>%
+  group_by(screenName)
+  summarise(meanDiv = mean(langDiv[,-1]), na.rm = TRUE)
+
+botDS <- left_join(botDS, botDiv)
+botDS$langDiv <- botDS$meanDiv
+#remove the meanDiv column for cleanup
+
+library(twitteR)
+#recreate latestStatDF code here where i get the latest statuses count for accounts to do mean_time_between_tweets variable
+#accts <- unlist(botDS$screenName)
+#latestStat <- lookupUsers(accts)
+#latestStatDF <- twListToDF(latestStat)
+latestStatDF <- 
+botDS$acct_age <- abs(as.numeric(botDS$acct_age, units = "mins"))
+botDS <- left_join(botDS, latestStatDF[, c("screenName", "statusesCount")], by = "screenName")
+
+botDS$mean_time_betwn_tweets = botDS$acct_age/botDS$statusesCount #time measured in minutes
+botDS <- botDS[, c(1, 6, 14, 16, 15, 18, 3, 12, 13, 4, 7, 9, 5, 8, 10, 11)]
+
+
+#binning the account creation column
+table(cut(botDS$acct_created, breaks = "6 month"))
+```
+
+library(quanteda)
+
+#using quanteda pkg
+langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
+
+botDiv <- groupedTweetsDF %>%
+  group_by(screenName)
+  summarise(meanDiv = rowmean(langDiv))
+
+botDS <- left_join(botDS, botDiv)
+botDS$langDiv <- botDS$meanDiv
+
+
+
+botDS <- data.frame(botAcctlist$screenName, botAcctlist$id, botAcctlist$created,
+        botAcctlist$statusesCount, langDiv = 0, mean_time_betwn_tweets = 0, bot = 0)
 columnnames <- names(botDS)
 columnnames[1] <- "screenName"
 columnnames[2] <- "ID"
