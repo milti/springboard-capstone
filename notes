@@ -1,0 +1,21 @@
+R >  names(botDS)
+ [1] "screenName"     "bot"            "followersCount" "friendsCount"  
+ [5] "favoritesCount" "name"           "acct_created"   "description"   
+ [9] "statusesCount"  "langDiv"        "Count"          "meanDiv"       
+[13] "acct_age"      
+
+R >  names(shredCTV)
+ [1] "screenName"             "bot"                    "acct_created"          
+ [4] "julianCreated"          "acct_age"               "langDiv"               
+ [7] "Count"                  "mean_time_betwn_tweets" "App"                   
+[10] "App.BoN"                "mCount"                 "Month"                 
+[13] "screen_name"            "followers_count"        "friends_count"         
+[16] "listed_count"           "statuses_count"         "count"    
+
+R >  names(shredCTV)
+ [1] "screenName"             "bot"                    "listed_count"          
+ [4] "followers_count"        "screen_name"            "friends_count"         
+ [7] "acct_created"           "julianCreated"          "acct_age"              
+[10] "langDiv"                "Count"                  "mean_time_betwn_tweets"
+[13] "App"                    "App.BoN"                "mCount"                
+[16] "Month"  

@@ -66,8 +66,8 @@ library(ROAuth)
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumerKey <- "dMs3guHk4y6DDdztO0JDmUTqB"
-consumerSecret <- "csna8h6XWQMd3ZppMBCUuNNXDTuBAVJLNK7QphZRCd5plkES0z"
+consumerKey <- "gI20zgelMl60fP7KE3GWtHTBl"
+consumerSecret <- "hZDUuFonXapqeO0puVSV2RyaqJmMCziDRXKWOg0RldL135LHy4"
 accessToken <- "1240280636-PTXARRUrytYtijYXyPWKptD9cHSCMzlAujQkATI"
 accessTokenSecret <- "uo8INEJbhhe43AIXfSs5veSZ6i7IHbh8Tn1LLlYTJqOm2"
 handle <- "conjja"
@@ -180,8 +180,8 @@ library(quanteda)
 langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
 
 botDiv <- groupedTweetsDF %>%
-  group_by(screenName)
-  summarise(meanDiv = mean(langDiv))
+  group_by(screenName) %>%
+  summarise(meanDiv = rowMeans(langDiv[,-1]))
 
 botDS <- left_join(botDS, botDiv)
 botDS$langDiv <- botDS$meanDiv
@@ -189,8 +189,8 @@ botDS$langDiv <- botDS$meanDiv
 
 #recreate latestStatDF code here where i get the latest statuses count for accounts to do mean_time_between_tweets variable
 accts <- unlist(botDS$screenName)
-latestStat <- lookupUsers(accts)
-latestStatDF <- twListToDF(latestStat)
+#latestStat <- lookupUsers(accts)
+latestStatDF <- twListToDF(lookupUsers(accts))
 
 botDS$acct_age <- abs(as.numeric(botDS$acct_age, units = "mins"))
 botDS <- left_join(botDS, latestStatDF[, c("screenName", "statusesCount")], by = "screenName")

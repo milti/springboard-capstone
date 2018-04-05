@@ -171,10 +171,12 @@ castoffDF <- setdiff(tweetsOPEN, groupedTweetsDF)
 ```{r, set-options, eval=FALSE, cache=FALSE}
 
 #using quanteda pkg
+library(quanteda)
+
 langDiv <- textstat_lexdiv(dfm(groupedTweetsDF$text))
 
 botDiv <- groupedTweetsDF %>%
-  group_by(screenName)
+  group_by(screenName) %>%
   summarise(meanDiv = mean(langDiv))
 
 botDS <- left_join(botDS, botDiv)
@@ -219,7 +221,6 @@ saveRDS(botAcctlist, "botAcctlist")
 saveRDS(recentTweetsDF, "recentTweetsDF")
 saveRDS(recentTweetsDS, "recentTweetsDS")
 saveRDS(groupedTweetsDF, "groupedTweetsDF")
-<<<<<<< HEAD
 saveRDS(castoffDF, "castoffDF")
 saveRDS(langDiv, "langDiv")
 saveRDS(botDiv, "botDiv")
